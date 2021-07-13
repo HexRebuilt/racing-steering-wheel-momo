@@ -7,43 +7,12 @@ private:
     int pinA; // Connected to CLK on KY-040
     int pinB;  // Connected to DT on KY-040
     int pinSW;
-    int encoderPosCount = 0, lastPosition = 0;
+    int encoderPosCount = 0;
     int pinALast;
     int aVal;
-    boolean bCW, switchstate, lastswitchstate;
+    boolean bCW;
 
-    int ReadRotations()
-    {
-        aVal = digitalRead(pinA);
-        if (aVal != pinALast)
-        { // Means the knob is rotating
-            // if the knob is rotating, we need to determine direction
-            // We do that by reading pin B.
-            if (digitalRead(pinB) != aVal)
-            { // Means pin A Changed first - We're Rotating Clockwise
-                encoderPosCount++;
-                bCW = true;
-            }
-            else
-            { // Otherwise B changed first and we're moving CCW
-                bCW = false;
-                encoderPosCount--;
-            }
-            Serial.print("Rotated: ");
-            if (bCW)
-            {
-                Serial.println("clockwise");
-            }
-            else
-            {
-                Serial.println("counterclockwise");
-            }
-            Serial.print("Encoder Position: ");
-            Serial.println(encoderPosCount);
-        }
-        pinALast = aVal;
-        return encoderPosCount;
-    }
+
 
 public:
 
@@ -107,17 +76,6 @@ public:
             Serial.println(encoderPosCount);
         }
         pinALast = aVal;
-        return 0;
+        return encoderPosCount;
     }
-    /*
-    boolean IsSwitchPressed(){
-        switchstate = digitalRead(pinSW);
-        if (!switchstate) //goes to 0v when pressed
-        {
-            Serial.println("Econder switch");
-        }
-        return switchstate;
-    }
-    */
-
 };
