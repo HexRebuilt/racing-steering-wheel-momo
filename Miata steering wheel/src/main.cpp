@@ -6,8 +6,9 @@
 #include "ignore_undesired_press.h"
 #include "encoder.h"
 
-unsigned short buttons[RADIO_BUTTONS] = {ACTIVE, SKIP_BUTTON, BACK_BUTTON, CALL_ON, CALL_OFF, VOICE_CMD, PAUSE};
+unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
 unsigned short buttonState[RADIO_BUTTONS] = {0};
+
 
 Encoder_KY040 volumewheel;
 
@@ -15,13 +16,14 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-
   //push-button configuration
   for (int i = 0; i < RADIO_BUTTONS; i++) //exclude the volume ones
   {
     pinMode(buttons[i],INPUT);
   }
 
+  //output pins
+  pinMode(RADIO_OUT,OUTPUT);
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA,PAUSE);
