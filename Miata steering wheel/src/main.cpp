@@ -5,12 +5,14 @@
 #include "defines.h"
 #include "ignore_undesired_press.h"
 #include "encoder.h"
+#include "volume.h"
 
 unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
 unsigned short buttonState[RADIO_BUTTONS] = {0};
-
+unsigned short radioOutputStep=0;
 
 Encoder_KY040 volumewheel;
+VolumeController volumecontroller;
 
 void setup() {
   // put your setup code here, to run once:
@@ -26,13 +28,22 @@ void setup() {
   pinMode(RADIO_OUT,OUTPUT);
   
   //setting up rotary encoder
-  volumewheel.Encodersetup(VOL_CLK,VOL_DATA,PAUSE);
+  volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
  
   
   delay(100);
   Serial.println("Pin configuration DONE");
   
   
+}
+
+/**
+ * function that modify the output for the radio depending on the input given by the button presse
+ * */
+
+void RadioOutput(short step)
+{
+  //TODO
 }
 
 void loop() {
@@ -42,9 +53,11 @@ void loop() {
   
 
   volumewheel.Steps();
-  //volumewheel.IsSwitchPressed();
+  radioOutputStep = volumecontroller.ChangeVolume(volumewheel.Steps());
+  RadioOutput (radioOutputStep);
 
-  if (InputCleanup(digitalRead(PAUSE), buttonState[6]))
+
+  if (InputCleanup(digitalRead(PAUSE_BUTTON), buttonState[6]))
   {
     Serial.print("button state:");
     Serial.println(buttonState[6]);
