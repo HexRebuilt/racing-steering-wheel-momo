@@ -35,4 +35,7 @@
 #define RADIO_OUT A0
 
 //steering wheel outputs 
-#define LCD_CS      49
+//LCD spi related constants
+#define LCD_DIN     51
+#define LCD_CLK     52
+#define LCD_CS      53

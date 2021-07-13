@@ -1,11 +1,15 @@
 #include <Arduino.h>
 #include <string.h>
 #include <stdlib.h>
+#include <SPI.h>
+#include <LedControl.h>
 
 #include "defines.h"
 #include "ignore_undesired_press.h"
 #include "encoder.h"
 #include "volume.h"
+
+
 
 unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
 unsigned short buttonState[RADIO_BUTTONS] = {0};
@@ -13,6 +17,9 @@ unsigned short radioOutputStep=0;
 
 Encoder_KY040 volumewheel;
 VolumeController volumecontroller;
+
+LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
+
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,6 +41,22 @@ void setup() {
   delay(100);
   Serial.println("Pin configuration DONE");
   
+  /*
+  SPI.begin();
+  SPI.setDataMode(SPI_MODE0); 
+  SPI.setClockDivider(SPI_CLOCK_DIV128); 
+  */
+  
+  //lcd.Begin();
+  lcd.shutdown(0,false);
+  lcd.setIntensity(0,1);
+  lcd.clearDisplay(0);
+  delay(10);
+  //lcd.Clear();
+  //lcd.DisplayText("HELLO", 0);
+  //lcd.MAX7219_SetBrightness(30);
+
+  delay(DEFAULT_DELAY);
   
 }
 
