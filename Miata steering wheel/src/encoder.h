@@ -20,7 +20,7 @@ public:
      * needs 3 pins:
      * INPUT: pins: CW, DATA, SWITCH. if no witch is available put it to 0
      * */
-    void Encodersetup(int pincw, int pindata, int pinsw)
+    void Encodersetup(int pincw, int pindata)
     {
         pinA = pincw;
         pinB = pindata;
