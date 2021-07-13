@@ -34,3 +34,5 @@
 //list of output pins
 #define RADIO_OUT A0
 
+//steering wheel outputs 
+#define LCD_CS      49
