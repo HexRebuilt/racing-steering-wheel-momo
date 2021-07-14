@@ -9,10 +9,14 @@
 #define CALL_OFF_BUTTON     PG5 
 #define VOICE_CMD_BUTTON    PE5 
 #define SOURCE_BUTTON       PE4 
-#define PAUSE_BUTTON       47
+#define PAUSE_BUTTON        47
+#define LCD_MODE_BUTTON     46
 
-#define VOL_CLK     45
-#define VOL_DATA    43 
+//encoders pin
+#define VOL_CLK             45
+#define VOL_DATA            43 
+#define BRIGHTNESS_CLK      42
+#define BRIGNTNESS_DATA     44
 
 //list of RADIO related costants
 #define RADIO_BUTTONS   8 //total # of radio buttons - no encoders clk and data
