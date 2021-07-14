@@ -38,7 +38,12 @@
 //list of output pins
 #define RADIO_OUT A0
 
-//steering wheel outputs 
+//steering wheel outputs
+#define MAX_BRIGHT_LEDs 20 //due to power limitations
+#define MAX_BRIGHT_LCD  15
+#define MIN_BRIGHT      1 //to be modified based on needs
+#define SENSITIVITY     2
+
 //LCD spi related constants
 #define LCD_DIN     51
 #define LCD_CLK     52

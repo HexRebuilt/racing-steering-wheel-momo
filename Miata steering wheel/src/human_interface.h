@@ -1,13 +1,7 @@
 #include <Arduino.h>
 #include <LedControl.h>
-
 #include <FastLED.h>
 
-
-#define MAX_BRIGHT_LEDs 255
-#define MAX_BRIGHT_LCD  15
-#define MIN_BRIGHT      1 //to be modified based on needs
-#define SENSITIVITY     2
 
 
 /**
@@ -20,7 +14,7 @@ class HumanInterface
 {
 private:
     /* data */
-    int rpm=0, kmh=0;
+    unsigned short rpm=0, kmh=0;
     int lcdbrightness = MAX_BRIGHT_LCD, ledbrightness = MAX_BRIGHT_LEDs; //initial percentage
     short currentvalue = 0, delta = 0, brightness = 100; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
@@ -91,18 +85,6 @@ private:
 
     }
     
-    /*
-    void colorWipe(uint32_t c, uint8_t wait)
-    {
-        uint16_t i;
-        for (i = 0; i < NUM_LED; i++)
-        {
-            ledbar.setPixelColor(i, c);
-            //ledbar.show();
-            delay(wait);
-        }
-        ledbar.show();
-    }*/
 
     void LedSetup(){
         FastLED.addLeds<LED_TYPE,LED_PIN,COLOR_ORDER>(ledbar,NUM_LEDS);
