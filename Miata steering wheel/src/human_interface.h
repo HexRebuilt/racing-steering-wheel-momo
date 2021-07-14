@@ -16,7 +16,8 @@ class HumanInterface
 private:
     /* data */
     int rpm=0, kmh=0;
-    int brightness = 100; //initial percentage 
+    int lcdbrightness = MAX_BRIGHT_LCD, ledbrightness = MAX_BRIGHT_LEDs; //initial percentage
+    short currentvalue = 0, delta = 0, brightness = 100; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
 
     void SetTextLCD(String text)
@@ -77,12 +78,55 @@ public:
         lcd.clearDisplay(0);
 
         SetTextLCD("-HELL0-");
-        delay(500);
+        //delay(500);
         //SetTextLCD("c1A0123.4");
-        
-
     }
 
+    /**
+     * setting up the brightness depending on the difference from the previous value adding 
+     * or subtracting 5% for each step 
+     * */
+    void SetBrightness(short value)
+    {
+        if (currentvalue == value)
+        {
+            return; //no action needed
+        }
 
+        if (currentvalue < value)//need to increase brightness
+        {
+            delta = value - currentvalue;
+            lcdbrightness+=delta;
+        }
+        else
+        {
+            delta = currentvalue - value;
+            lcdbrightness-=delta;
+        }
+        currentvalue = value;
+               
+
+        //keeping the LCD brightness in range
+        if (lcdbrightness > MAX_BRIGHT_LCD)
+        {
+            lcdbrightness = MAX_BRIGHT_LCD;
+        }
+        if (lcdbrightness < MIN_BRIGHT)
+        {
+            lcdbrightness = MIN_BRIGHT;
+        }
+        
+
+        
+        Serial.print("new lcd-brightness: ");
+        Serial.println(lcdbrightness);
+        //Serial.print("new led-brightness: ");
+        //Serial.println(ledbrightness);
+
+        //add if 0 turnOFF
+
+        lcd.setIntensity(0, lcdbrightness);
+        
+    }
 
 };

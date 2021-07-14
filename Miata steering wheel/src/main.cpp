@@ -79,6 +79,7 @@ void loop() {
 
   }
   
+  human_interface.SetBrightness(ledwheel.Steps());
   
 
   //delay(500);
