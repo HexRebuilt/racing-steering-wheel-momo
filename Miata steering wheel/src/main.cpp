@@ -15,7 +15,7 @@ unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON
 unsigned short buttonState[RADIO_BUTTONS] = {0};
 unsigned short radioOutputStep=0;
 
-Encoder_KY040 volumewheel;
+Encoder_KY040 volumewheel,ledwheel;
 VolumeController volumecontroller;
 
 LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
@@ -36,28 +36,31 @@ void setup() {
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
+  ledwheel.Encodersetup(BRIGHTNESS_CLK,BRIGNTNESS_DATA);
+  pinMode(LCD_MODE_BUTTON,INPUT);
  
   
   delay(100);
   Serial.println("Pin configuration DONE");
   
-  /*
-  SPI.begin();
-  SPI.setDataMode(SPI_MODE0); 
-  SPI.setClockDivider(SPI_CLOCK_DIV128); 
-  */
-  
-  //lcd.Begin();
+  //lcd initialization
   lcd.shutdown(0,false);
+  lcd.setScanLimit(0,8); //8 digit
   lcd.setIntensity(0,1);
   lcd.clearDisplay(0);
   delay(10);
-  //lcd.Clear();
-  //lcd.DisplayText("HELLO", 0);
-  //lcd.MAX7219_SetBrightness(30);
+  lcd.setChar(0,7,'-',false);
+  lcd.setChar(0,6,'-',false);
+  lcd.setChar(0,5,'H',false);
+  lcd.setChar(0,4,'E',false);
+  lcd.setChar(0,3,'L',false);
+  lcd.setChar(0,2,'L',false);
+  lcd.setChar(0,1,'0',false);
+  lcd.setChar(0,0,'-',false);
+  lcd.setIntensity(0,8);
+  
 
   delay(DEFAULT_DELAY);
-  
 }
 
 /**
