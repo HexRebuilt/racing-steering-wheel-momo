@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <LedControl.h>
-#include <Adafruit_NeoPixel.h>
+
+#include <FastLED.h>
+
+
 #define MAX_BRIGHT_LEDs 255
 #define MAX_BRIGHT_LCD  15
 #define MIN_BRIGHT      1 //to be modified based on needs
 #define SENSITIVITY     2
-#define LED_DELAY       100
 
 
 /**
@@ -23,8 +25,9 @@ private:
     short currentvalue = 0, delta = 0, brightness = 100; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
     String brightchange="";
+    CRGB ledbar[NUM_LEDS];
 
-    Adafruit_NeoPixel ledbar = Adafruit_NeoPixel(NUM_LED,LED_PIN,NEO_GRB + NEO_KHZ800);
+    
     unsigned short offledindex, ledindex=0;
 
     void SetTextLCD(String text)
@@ -84,18 +87,11 @@ private:
      * */
     void SetLEDs(unsigned short rpm)
     {
-        offledindex = map(rpm,0,100,0,8); //found where to turn off the leds
-        for (ledindex = 0; ledindex < ledbar.numPixels(); ledindex++)//cycling all the leds
-        {
-            //add all the logic for the leds
-            ledbar.setPixelColor(ledindex,ledbar.Color(100,0,255));
-        }
-
-        ledbar.show();
 
 
     }
-
+    
+    /*
     void colorWipe(uint32_t c, uint8_t wait)
     {
         uint16_t i;
@@ -106,6 +102,36 @@ private:
             delay(wait);
         }
         ledbar.show();
+    }*/
+
+    void LedSetup(){
+        FastLED.addLeds<LED_TYPE,LED_PIN,COLOR_ORDER>(ledbar,NUM_LEDS);
+        FastLED.setBrightness(1);
+        for (int i = 0; i < NUM_LEDS; i++)
+        {
+            ledbar[i] = CRGB::Red;
+            delay(LED_REFRESHRATE);
+            //FastLED.show();
+        }
+        FastLED.show();
+        delay(100);
+        for (int i = 0; i < NUM_LEDS; i++)
+        {
+            ledbar[i] = CRGB::Green;
+            delay(LED_REFRESHRATE);
+            //FastLED.show();
+        }
+        FastLED.show();
+        delay(100);
+        for (int i = 0; i < NUM_LEDS; i++)
+        {
+            ledbar[i] = CRGB::Blue;
+            delay(LED_REFRESHRATE);
+            //FastLED.show();
+        }
+        FastLED.show();
+        Serial.println("LED configuration DONE");
+
     }
 
 public:
@@ -120,16 +146,8 @@ public:
         SetTextLCD("-HELL0-");
         //delay(500);
         //SetTextLCD("c1A0123.4");
-
         //initialize ledbar
-        ledbar.begin();
-        ledbar.show();
-        colorWipe(ledbar.Color(60,0,0),LED_DELAY);
-        delay(500);
-        colorWipe(ledbar.Color(0,200,250),LED_DELAY);
-        
-
-        //SetLEDs(100);
+        LedSetup();
     }
 
     /**

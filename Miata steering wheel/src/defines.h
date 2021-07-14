@@ -46,7 +46,10 @@
 
 //NeoPixel led bar
 #define LED_PIN             7
-#define NUM_LED             8
+#define NUM_LEDS            8
+#define LED_TYPE            WS2812B
+#define COLOR_ORDER         RGB
+#define LED_REFRESHRATE     5
 #define GREEN_LED_INDEX     4
 #define YELLOW_LED_INDEX    6
 #define RED_LED_INDEX       8

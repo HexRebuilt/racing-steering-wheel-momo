@@ -46,7 +46,7 @@ public:
     /**
      * gives you back the number of steps travelled
      * */
-    short Steps()
+    int Steps()
     {
         aVal = digitalRead(pinA);
         if (aVal != pinALast)
