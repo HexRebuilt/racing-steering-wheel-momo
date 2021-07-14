@@ -8,6 +8,7 @@
 #include "ignore_undesired_press.h"
 #include "encoder.h"
 #include "volume.h"
+#include "human_interface.h"
 
 
 
@@ -18,7 +19,8 @@ unsigned short radioOutputStep=0;
 Encoder_KY040 volumewheel,ledwheel;
 VolumeController volumecontroller;
 
-LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
+HumanInterface human_interface;
+//LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
 
 
 void setup() {
@@ -43,21 +45,8 @@ void setup() {
   delay(100);
   Serial.println("Pin configuration DONE");
   
-  //lcd initialization
-  lcd.shutdown(0,false);
-  lcd.setScanLimit(0,8); //8 digit
-  lcd.setIntensity(0,1);
-  lcd.clearDisplay(0);
-  delay(10);
-  lcd.setChar(0,7,'-',false);
-  lcd.setChar(0,6,'-',false);
-  lcd.setChar(0,5,'H',false);
-  lcd.setChar(0,4,'E',false);
-  lcd.setChar(0,3,'L',false);
-  lcd.setChar(0,2,'L',false);
-  lcd.setChar(0,1,'0',false);
-  lcd.setChar(0,0,'-',false);
-  lcd.setIntensity(0,8);
+  human_interface.Initialize();
+
   
 
   delay(DEFAULT_DELAY);
