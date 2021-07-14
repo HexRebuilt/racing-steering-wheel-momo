@@ -27,7 +27,7 @@ private:
     void SetTextLCD(String text)
     {   
         lcd.clearDisplay(0);
-        int i=0, digit=7;
+        int i, digit=7;
         //check if the string is less than 8 characters, in case fill it up with spaces
         //i do not care about the termination character because it cannot be displayed
         if (text.length()<8)
@@ -39,18 +39,42 @@ private:
         }
 
         i = 7;
-        digit=7;
+        Serial.println(text.length());
+        /*for (i = text.length(); i >= 0 ; i--)
+        {
+            Serial.println(text[text.length()-i]);
+            //Serial.println(i);
+            Serial.println(digit);
+            Serial.println("----------------");
+            
+            lcd.setChar(0, digit, text[text.length()-i], text.charAt(text.length()-i-1)=='.' );
+            if (text.charAt(text.length()-i-1)=='.')
+            {
+                Serial.println(text.charAt(text.length()-i-1));
+                i--;
+            }
+            
+            digit--;
+        }*/
+        
+
+        
         while(digit >= 0) //writing text from the last digit to the first
         {
-            /*
+            
             Serial.print("char:");
             Serial.print(text[7-i]);
             Serial.print(" @:");
             Serial.print(7-i);
             Serial.print(" digit:");
             Serial.println(digit);
-            */
             
+            Serial.print("i : ");
+            Serial.println(i);
+            Serial.print("text.charAt(text.length()-i :");
+            Serial.println(text.charAt(text.length()-i));
+            
+
             //check for the '.' character
             if (text.charAt(text.length()-i)!='.')
             {
@@ -58,14 +82,17 @@ private:
             }
             else
             {
-                i--;
-                digit--;
+                //i--;
+                //digit--;
+                
                 Serial.print("DOT found writing ");
+                
                 Serial.print(text[7-i]);
                 Serial.print(". @ digit:");
                 Serial.println(digit);
+                
                 lcd.setChar(0, digit, text[7-i], true); //rewrite the previous char with the dot
-
+                break;
             }
 
             i--;
@@ -73,6 +100,7 @@ private:
 
             //delay(250);
         }
+        
     }
 
     /**
@@ -125,9 +153,10 @@ public:
         lcd.setIntensity(0, MAX_BRIGHT_LCD);
         lcd.clearDisplay(0);
         Serial.println("LCD configuration DONE");
+
         SetTextLCD("-HELL0-");
-        //delay(500);
-        //SetTextLCD("c1A0123.4");
+        delay(500);
+        SetTextLCD("c1A.01.23");
         //initialize ledbar
         LedSetup();
     }
