@@ -78,7 +78,7 @@ public:
 
         SetTextLCD("-HELL0-");
         delay(500);
-        SetTextLCD("c1A0123.4");
+        //SetTextLCD("c1A0123.4");
         
 
     }
