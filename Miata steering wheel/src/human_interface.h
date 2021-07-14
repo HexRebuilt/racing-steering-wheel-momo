@@ -3,6 +3,7 @@
 #define MAX_BRIGHT_LEDs 255
 #define MAX_BRIGHT_LCD  15
 #define MIN_BRIGHT      1 //to be modified based on needs
+#define SENSITIVITY     2
 
 
 /**
@@ -19,6 +20,7 @@ private:
     int lcdbrightness = MAX_BRIGHT_LCD, ledbrightness = MAX_BRIGHT_LEDs; //initial percentage
     short currentvalue = 0, delta = 0, brightness = 100; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
+    String brightchange="";
 
     void SetTextLCD(String text)
     {   
@@ -38,12 +40,15 @@ private:
         digit=7;
         while(digit >= 0) //writing text from the last digit to the first
         {
+            /*
             Serial.print("char:");
             Serial.print(text[7-i]);
             Serial.print(" @:");
             Serial.print(7-i);
             Serial.print(" digit:");
             Serial.println(digit);
+            */
+            
             //check for the '.' character
             if (text.charAt(text.length()-i)!='.')
             {
@@ -64,7 +69,7 @@ private:
             i--;
             digit--;
 
-            delay(250);
+            //delay(250);
         }
     }
 
@@ -96,11 +101,13 @@ public:
         if (currentvalue < value)//need to increase brightness
         {
             delta = value - currentvalue;
+            //delta = delta / (float) SENSITIVITY;
             lcdbrightness+=delta;
         }
         else
         {
             delta = currentvalue - value;
+            //delta = delta / (float) SENSITIVITY;
             lcdbrightness-=delta;
         }
         currentvalue = value;
@@ -124,8 +131,11 @@ public:
         //Serial.println(ledbrightness);
 
         //add if 0 turnOFF
-
         lcd.setIntensity(0, lcdbrightness);
+        brightness = map (lcdbrightness,MIN_BRIGHT,MAX_BRIGHT_LCD,10,100);
+        brightchange = "L16H ";
+        brightchange.concat(brightness);
+        SetTextLCD(brightchange);
         
     }
 
