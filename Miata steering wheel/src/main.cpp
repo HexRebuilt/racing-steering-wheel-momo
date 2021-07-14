@@ -78,6 +78,7 @@ void loop() {
     Serial.println(buttonState[6]);
 
   }
+
   
   human_interface.SetBrightness(ledwheel.Steps());
   

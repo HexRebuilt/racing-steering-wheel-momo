@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include <LedControl.h>
+#include <Adafruit_NeoPixel.h>
 #define MAX_BRIGHT_LEDs 255
 #define MAX_BRIGHT_LCD  15
 #define MIN_BRIGHT      1 //to be modified based on needs
 #define SENSITIVITY     2
+#define LED_DELAY       100
 
 
 /**
@@ -21,6 +23,9 @@ private:
     short currentvalue = 0, delta = 0, brightness = 100; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
     String brightchange="";
+
+    Adafruit_NeoPixel ledbar = Adafruit_NeoPixel(NUM_LED,LED_PIN,NEO_GRB + NEO_KHZ800);
+    unsigned short offledindex, ledindex=0;
 
     void SetTextLCD(String text)
     {   
@@ -73,6 +78,36 @@ private:
         }
     }
 
+    /**
+     * Function that sets the color and state of the led depending on the RPM.
+     * INPUT: Duty-Cycle taken from the engine rpm
+     * */
+    void SetLEDs(unsigned short rpm)
+    {
+        offledindex = map(rpm,0,100,0,8); //found where to turn off the leds
+        for (ledindex = 0; ledindex < ledbar.numPixels(); ledindex++)//cycling all the leds
+        {
+            //add all the logic for the leds
+            ledbar.setPixelColor(ledindex,ledbar.Color(100,0,255));
+        }
+
+        ledbar.show();
+
+
+    }
+
+    void colorWipe(uint32_t c, uint8_t wait)
+    {
+        uint16_t i;
+        for (i = 0; i < NUM_LED; i++)
+        {
+            ledbar.setPixelColor(i, c);
+            //ledbar.show();
+            delay(wait);
+        }
+        ledbar.show();
+    }
+
 public:
     void Initialize()
     {
@@ -81,10 +116,20 @@ public:
         lcd.setScanLimit(0, 8); //8 digit
         lcd.setIntensity(0, MAX_BRIGHT_LCD);
         lcd.clearDisplay(0);
-
+        Serial.println("LCD configuration DONE");
         SetTextLCD("-HELL0-");
         //delay(500);
         //SetTextLCD("c1A0123.4");
+
+        //initialize ledbar
+        ledbar.begin();
+        ledbar.show();
+        colorWipe(ledbar.Color(60,0,0),LED_DELAY);
+        delay(500);
+        colorWipe(ledbar.Color(0,200,250),LED_DELAY);
+        
+
+        //SetLEDs(100);
     }
 
     /**

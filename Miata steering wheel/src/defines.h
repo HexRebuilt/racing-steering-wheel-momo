@@ -43,3 +43,13 @@
 #define LCD_DIN     51
 #define LCD_CLK     52
 #define LCD_CS      53
+
+//NeoPixel led bar
+#define LED_PIN             7
+#define NUM_LED             8
+#define GREEN_LED_INDEX     4
+#define YELLOW_LED_INDEX    6
+#define RED_LED_INDEX       8
+#define GREEN_RPM_DC        50 //4000RPM should be more or less 60% of DC
+#define YELLOW_RPM_DC       70 //5500RPM should be more or less 80% of DC
+#define SHIFTLIGHT_RPM_DC   80      
