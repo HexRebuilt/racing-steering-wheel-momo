@@ -221,14 +221,17 @@ public:
         //Serial.print("Offled: ");
         //Serial.println(offled);
         
-        for (int i = 0; i < NUM_LEDS; i++)
+        for (int i = NUM_LEDS-1 ; i >= 0; i--) //the leds are mounted upside down
         {
-            if (i*10<=rpmDC)//the leds needs to be on.
+            Serial.print("led # ");
+            Serial.println(i);
+            if ((NUM_LEDS - i)*10<=rpmDC)//the leds needs to be on.
             {
+                Serial.println("the led needs to be ON");
                 //ledbar[i] = CRGB::Yellow;
                 //color selector based on the rpm DC
                 
-                if (i*10 < YELLOW_RPM_DC && i*10> GREEN_RPM_DC)
+                if (rpmDC < YELLOW_RPM_DC && rpmDC> GREEN_RPM_DC)
                 {
                     Serial.println("Yellow");
                     ledbar[i] = CRGB::Yellow;
@@ -238,7 +241,7 @@ public:
                     Serial.println("Red");
                     ledbar[i] = CRGB::Red;
                 }
-                if (i*10 < GREEN_RPM_DC)
+                if (rpmDC < GREEN_RPM_DC)
                 {
                     Serial.println("Green");
                     ledbar[i] = CRGB::Green;
@@ -249,8 +252,8 @@ public:
                 ledbar[i] = CRGB::Black;
             }
             delay(LED_REFRESHRATE);
-            FastLED.show();
-            delay(500);
+            //FastLED.show();
+            //delay(500);
         }
         FastLED.show();   
     }
