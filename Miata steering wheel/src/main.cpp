@@ -42,7 +42,9 @@ void setup() {
   //Serial.println("radio 0");
   //delay(5000);
   //setPotentiometer(RADIO_OUT,RADIO_BUTTONS);
-  
+
+  pinMode(LCD_MODE_BUTTON,INPUT);
+    
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK,BRIGNTNESS_DATA);
@@ -80,7 +82,8 @@ void loop() {
   {
     Serial.print("button state:");
     Serial.println(buttonState[6]);
-    
+    Serial.println(digitalRead(LCD_MODE_BUTTON));
+
   }
 
   

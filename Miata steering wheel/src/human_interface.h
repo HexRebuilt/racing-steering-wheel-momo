@@ -236,9 +236,9 @@ public:
             if ((NUM_LEDS - i) >= offled)//the leds needs to be on.
             {
                 Serial.println("the led needs to be ON");
-                //ledbar[i] = CRGB::Yellow;
+                ledbar[i] = CRGB::Purple;
                 //color selector based on the rpm DC
-                
+                /*
                 if (rpmDC < YELLOW_RPM_DC && rpmDC> GREEN_RPM_DC)
                 {
                     Serial.println("Yellow");
@@ -254,7 +254,7 @@ public:
                     Serial.println("Green");
                     ledbar[NUM_LEDS - i] = CRGB::Green;
                 }
-
+                */
             }
             else{
                 ledbar[NUM_LEDS - i] = CRGB::Black;
