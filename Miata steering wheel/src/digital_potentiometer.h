@@ -7,11 +7,13 @@
 /**
          * functions that sends the value to the digital potentiometer and sets it
          * the cs is the pin that controls the controller and out is the value to set
-         * 
+         * INPUT: is the number of the button
          * */
 void setPotentiometer(int cs, int value)
 {
     unsigned char out = map(value,0,RADIO_BUTTONS,STEPS,0);
+    Serial.print("DAC output: ");
+    Serial.println(out);
     // Puts low the chip select
     digitalWrite(cs, LOW);
     // Send the first byte equal to zero to write the Wiper register

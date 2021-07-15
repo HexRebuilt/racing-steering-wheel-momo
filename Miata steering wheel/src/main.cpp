@@ -27,20 +27,21 @@ HumanInterface human_interface;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  SPI.begin();
+  
   
   //push-button configuration
   for (int i = 0; i < RADIO_BUTTONS; i++) //exclude the volume ones
   {
     pinMode(buttons[i],INPUT);
   }
-
+  
+  SPI.begin();
   //output pins
   pinMode(RADIO_OUT,OUTPUT);
   setPotentiometer(RADIO_OUT,NO_OUT);
   Serial.println("radio 0");
   delay(5000);
-  setPotentiometer(RADIO_OUT,STEPS);
+  setPotentiometer(RADIO_OUT,RADIO_BUTTONS);
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
@@ -75,12 +76,11 @@ void loop() {
   radioOutputStep = volumecontroller.ChangeVolume(volumewheel.Steps());
   RadioOutput (radioOutputStep);
 
-  setPotentiometer(RADIO_OUT,0);
   if (InputCleanup(digitalRead(PAUSE_BUTTON), buttonState[6]))
   {
     Serial.print("button state:");
     Serial.println(buttonState[6]);
-    setPotentiometer(RADIO_OUT,124);
+    
   }
 
   
