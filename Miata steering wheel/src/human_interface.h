@@ -21,8 +21,6 @@ private:
     String brightchange="";
     CRGB ledbar[NUM_LEDS];
 
-    
-    unsigned short offledindex, ledindex=0;
 
     void SetTextLCD(String text)
     {   
@@ -39,8 +37,9 @@ private:
         }
 
         i = 7;
-        Serial.println(text.length());
-        /*for (i = text.length(); i >= 0 ; i--)
+        
+        /*Serial.println(text.length());
+        for (i = text.length(); i >= 0 ; i--)
         {
             Serial.println(text[text.length()-i]);
             //Serial.println(i);
@@ -61,7 +60,7 @@ private:
         
         while(digit >= 0) //writing text from the last digit to the first
         {
-            
+            /*
             Serial.print("char:");
             Serial.print(text[7-i]);
             Serial.print(" @:");
@@ -73,7 +72,7 @@ private:
             Serial.println(i);
             Serial.print("text.charAt(text.length()-i :");
             Serial.println(text.charAt(text.length()-i));
-            
+            */
 
             //check for the '.' character
             if (text.charAt(text.length()-i)!='.')
@@ -103,16 +102,6 @@ private:
         
     }
 
-    /**
-     * Function that sets the color and state of the led depending on the RPM.
-     * INPUT: Duty-Cycle taken from the engine rpm
-     * */
-    void SetLEDs(unsigned short rpm)
-    {
-
-
-    }
-    
 
     void LedSetup(){
         FastLED.addLeds<LED_TYPE,LED_PIN,COLOR_ORDER>(ledbar,NUM_LEDS);
@@ -140,6 +129,12 @@ private:
             //FastLED.show();
         }
         FastLED.show();
+        for (int i = 0; i < NUM_LEDS; i++)
+        {
+            SetLEDs(i*10);
+            delay(50);
+        }
+        
         Serial.println("LED configuration DONE");
 
     }
@@ -212,5 +207,53 @@ public:
         SetTextLCD(brightchange);
         
     }
+
+    /**
+     * Function that sets the color and state of the led depending on the RPM.
+     * INPUT: Duty-Cycle taken from the engine rpm
+     * */
+    void SetLEDs(unsigned short rpmDC)
+    {
+        Serial.print("RPM DC: ");
+        Serial.println(rpmDC);
+        //MAP does not work
+        //unsigned short offled = map(rpm,0,SHIFTLIGHT_RPM_DC,0,NUM_LEDS);
+        //Serial.print("Offled: ");
+        //Serial.println(offled);
+        
+        for (int i = 0; i < NUM_LEDS; i++)
+        {
+            if (i*10<=rpmDC)//the leds needs to be on.
+            {
+                //ledbar[i] = CRGB::Yellow;
+                //color selector based on the rpm DC
+                
+                if (i*10 < YELLOW_RPM_DC && i*10> GREEN_RPM_DC)
+                {
+                    Serial.println("Yellow");
+                    ledbar[i] = CRGB::Yellow;
+                }
+                else
+                {
+                    Serial.println("Red");
+                    ledbar[i] = CRGB::Red;
+                }
+                if (i*10 < GREEN_RPM_DC)
+                {
+                    Serial.println("Green");
+                    ledbar[i] = CRGB::Green;
+                }
+
+            }
+            else{
+                ledbar[i] = CRGB::Black;
+            }
+            delay(LED_REFRESHRATE);
+            FastLED.show();
+            delay(500);
+        }
+        FastLED.show();   
+    }
+    
 
 };

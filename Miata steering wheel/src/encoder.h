@@ -27,13 +27,7 @@ public:
         
         pinMode(pinA, INPUT);
         pinMode(pinB, INPUT);
-        /*
-        if (pinsw != 0) // oly if switch is present
-        {
-            pinSW = pinsw;
-            pinMode(pinSW,INPUT);
-        }
-        */
+        
       
         /* Read Pin A
         Whatever state it's in will reflect the last position
