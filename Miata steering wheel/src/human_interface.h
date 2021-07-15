@@ -14,9 +14,9 @@ class HumanInterface
 {
 private:
     /* data */
-    unsigned short rpm=0, kmh=0;
     int lcdbrightness = MAX_BRIGHT_LCD, ledbrightness = MAX_BRIGHT_LEDs; //initial percentage
-    short currentvalue = 0, delta = 0, brightness = 100; 
+    short currentvalue = 0, delta = 0, brightness = 100;
+    unsigned char offled = NUM_LEDS; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
     String brightchange="";
     CRGB ledbar[NUM_LEDS];
@@ -110,28 +110,26 @@ private:
         {
             ledbar[i] = CRGB::Red;
             delay(LED_REFRESHRATE);
-            //FastLED.show();
+            FastLED.show();
         }
-        FastLED.show();
         delay(100);
         for (int i = 0; i < NUM_LEDS; i++)
         {
             ledbar[i] = CRGB::Green;
             delay(LED_REFRESHRATE);
-            //FastLED.show();
+            FastLED.show();
         }
-        FastLED.show();
         delay(100);
         for (int i = 0; i < NUM_LEDS; i++)
         {
             ledbar[i] = CRGB::Blue;
             delay(LED_REFRESHRATE);
-            //FastLED.show();
+            FastLED.show();
         }
         FastLED.show();
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            SetLEDs(i*10);
+            SetLEDs(i+1*10);
             delay(50);
         }
         
@@ -202,17 +200,11 @@ public:
         {
             lcdbrightness = MIN_BRIGHT_LCD;
         }
-        
-
-        
-        Serial.print("new lcd-brightness: ");
-        Serial.println(lcdbrightness);
-        Serial.print("new led-brightness: ");
-        Serial.println(ledbrightness);
-
         //changing the brightness
         lcd.setIntensity(0, lcdbrightness);
         brightness = map (lcdbrightness,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD,10,100);
+        Serial.print("new brightness: ");
+        Serial.println(brightness);
         brightchange = "L16H ";
         brightchange.concat(brightness);
         SetTextLCD(brightchange);
@@ -230,15 +222,18 @@ public:
         Serial.print("RPM DC: ");
         Serial.println(rpmDC);
         //MAP does not work
-        //unsigned short offled = map(rpm,0,SHIFTLIGHT_RPM_DC,0,NUM_LEDS);
-        //Serial.print("Offled: ");
-        //Serial.println(offled);
+        offled = map(rpmDC,0,SHIFTLIGHT_RPM_DC,1,NUM_LEDS);
+        Serial.print("Offled: ");
+        Serial.println(offled);
         
         for (int i = NUM_LEDS-1 ; i >= 0; i--) //the leds are mounted upside down
         {
             Serial.print("led # ");
-            Serial.println(i);
-            if ((NUM_LEDS - i)*10<=rpmDC)//the leds needs to be on.
+            Serial.println(NUM_LEDS-i);
+            Serial.print("OFFLED # ");
+            Serial.println(offled);
+            
+            if ((NUM_LEDS - i) >= offled)//the leds needs to be on.
             {
                 Serial.println("the led needs to be ON");
                 //ledbar[i] = CRGB::Yellow;
@@ -247,26 +242,24 @@ public:
                 if (rpmDC < YELLOW_RPM_DC && rpmDC> GREEN_RPM_DC)
                 {
                     Serial.println("Yellow");
-                    ledbar[i] = CRGB::Yellow;
+                    ledbar[NUM_LEDS - i] = CRGB::Yellow;
                 }
                 else
                 {
                     Serial.println("Red");
-                    ledbar[i] = CRGB::Red;
+                    ledbar[NUM_LEDS - i] = CRGB::Red;
                 }
                 if (rpmDC < GREEN_RPM_DC)
                 {
                     Serial.println("Green");
-                    ledbar[i] = CRGB::Green;
+                    ledbar[NUM_LEDS - i] = CRGB::Green;
                 }
 
             }
             else{
-                ledbar[i] = CRGB::Black;
+                ledbar[NUM_LEDS - i] = CRGB::Black;
             }
             delay(LED_REFRESHRATE);
-            //FastLED.show();
-            //delay(500);
         }
         FastLED.show();   
     }

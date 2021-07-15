@@ -39,9 +39,9 @@ void setup() {
   //output pins
   pinMode(RADIO_OUT,OUTPUT);
   setPotentiometer(RADIO_OUT,NO_OUT);
-  Serial.println("radio 0");
-  delay(5000);
-  setPotentiometer(RADIO_OUT,RADIO_BUTTONS);
+  //Serial.println("radio 0");
+  //delay(5000);
+  //setPotentiometer(RADIO_OUT,RADIO_BUTTONS);
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
