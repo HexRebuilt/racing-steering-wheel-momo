@@ -9,6 +9,7 @@
 #include "encoder.h"
 #include "volume.h"
 #include "human_interface.h"
+#include "digital_potentiometer.h"
 
 
 
@@ -26,7 +27,8 @@ HumanInterface human_interface;
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-
+  SPI.begin();
+  
   //push-button configuration
   for (int i = 0; i < RADIO_BUTTONS; i++) //exclude the volume ones
   {
@@ -35,6 +37,7 @@ void setup() {
 
   //output pins
   pinMode(RADIO_OUT,OUTPUT);
+  setPotentiometer(RADIO_OUT,0);
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
