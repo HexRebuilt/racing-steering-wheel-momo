@@ -36,8 +36,9 @@
 
 
 //list of output pins
-#define RADIO_OUT 6 //d6 is where the digital potentiometer will be connected to
+#define RADIO_OUT   6 //d6 is where the digital potentiometer will be connected to
 #define MPC4131
+#define NO_OUT      0
 
 //steering wheel outputs
 #define MAX_BRIGHT_LEDs 15 //due to power limitations
@@ -48,9 +49,9 @@
 #define LED_BRIGHT_STEP 1 // 255/MAXBRIGHTLCD=17 steps
 
 //LCD spi related constants
-#define LCD_DIN     51
-#define LCD_CLK     52
-#define LCD_CS      53
+#define LCD_DIN    14 //51
+#define LCD_CLK    15 //52
+#define LCD_CS     16 //53
 
 //NeoPixel led bar
 #define LED_PIN             7
