@@ -37,7 +37,8 @@ void setup() {
 
   //output pins
   pinMode(RADIO_OUT,OUTPUT);
-  //setPotentiometer(RADIO_OUT,0);
+  digitalWrite(RADIO_OUT,HIGH);
+  //setPotentiometer(RADIO_OUT,100);
   
   //setting up rotary encoder
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
