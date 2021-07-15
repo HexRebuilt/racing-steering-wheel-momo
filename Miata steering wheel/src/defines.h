@@ -36,13 +36,16 @@
 
 
 //list of output pins
-#define RADIO_OUT A0
+#define RADIO_OUT 6 //d6 is where the digital potentiometer will be connected to
+#define MPC4131
 
 //steering wheel outputs
-#define MAX_BRIGHT_LEDs 20 //due to power limitations
+#define MAX_BRIGHT_LEDs 15 //due to power limitations
 #define MAX_BRIGHT_LCD  15
-#define MIN_BRIGHT      1 //to be modified based on needs
+#define MIN_BRIGHT_LCD  1 //to be modified based on needs
+#define MIN_BRIGHT_LEDs 1 //to be modified based on needs
 #define SENSITIVITY     2
+#define LED_BRIGHT_STEP 1 // 255/MAXBRIGHTLCD=17 steps
 
 //LCD spi related constants
 #define LCD_DIN     51

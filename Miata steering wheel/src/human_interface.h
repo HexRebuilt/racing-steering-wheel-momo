@@ -172,39 +172,52 @@ public:
             delta = value - currentvalue;
             //delta = delta / (float) SENSITIVITY;
             lcdbrightness+=delta;
+            ledbrightness+=delta*LED_BRIGHT_STEP;
         }
         else
         {
             delta = currentvalue - value;
             //delta = delta / (float) SENSITIVITY;
             lcdbrightness-=delta;
+            ledbrightness-=delta*LED_BRIGHT_STEP;
         }
         currentvalue = value;
                
+        //keeping the LED brightness in range
+        if (ledbrightness > MAX_BRIGHT_LEDs)
+        {
+            ledbrightness = MAX_BRIGHT_LEDs;
+        }
+        if (ledbrightness < MIN_BRIGHT_LEDs)
+        {
+            ledbrightness = MIN_BRIGHT_LEDs;
+        }
 
         //keeping the LCD brightness in range
         if (lcdbrightness > MAX_BRIGHT_LCD)
         {
             lcdbrightness = MAX_BRIGHT_LCD;
         }
-        if (lcdbrightness < MIN_BRIGHT)
+        if (lcdbrightness < MIN_BRIGHT_LCD)
         {
-            lcdbrightness = MIN_BRIGHT;
+            lcdbrightness = MIN_BRIGHT_LCD;
         }
         
 
         
         Serial.print("new lcd-brightness: ");
         Serial.println(lcdbrightness);
-        //Serial.print("new led-brightness: ");
-        //Serial.println(ledbrightness);
+        Serial.print("new led-brightness: ");
+        Serial.println(ledbrightness);
 
-        //add if 0 turnOFF
+        //changing the brightness
         lcd.setIntensity(0, lcdbrightness);
-        brightness = map (lcdbrightness,MIN_BRIGHT,MAX_BRIGHT_LCD,10,100);
+        brightness = map (lcdbrightness,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD,10,100);
         brightchange = "L16H ";
         brightchange.concat(brightness);
         SetTextLCD(brightchange);
+        FastLED.setBrightness(ledbrightness);
+        FastLED.show();
         
     }
 
