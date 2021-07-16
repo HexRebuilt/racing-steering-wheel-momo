@@ -18,7 +18,7 @@
 unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
 unsigned short buttonState[RADIO_BUTTONS] = {0};
 unsigned short radioOutputStep=0;
-int8_t rpm = 0;
+int rpm = 0;
 
 //RotaryEncoderAdvanced<float> volumeEncoder (VOL_CLK,VOL_DATA,PAUSE_BUTTON,VOL_SENSITIVITY,-256,+256);
 //RotaryEncoderAdvanced<float> brightnessEncoder(BRIGHTNESS_CLK,BRIGNTNESS_DATA,LCD_MODE_BUTTON,BRIGHTNESS_SENSITIVITY,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD);
@@ -31,10 +31,7 @@ HumanInterface human_interface;
 //LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
 
 void interruptVolume(){
-  //volumeEncoder.readAB();
   rpm = volumewheel.Steps();
-  //Serial.println("Volume");
-  //Serial.println(volumeEncoder.getPosition());
 }
 void interruptPause(){
   //volumeEncoder.readPushButton();
@@ -43,16 +40,15 @@ void interruptPause(){
 }
 void interruptBrightness(){
   human_interface.SetBrightness(ledwheel.Steps());
+  delay(500);
 }
 void interruptLCDmode(){
-  //brightnessEncoder.readPushButton();
   Serial.println("LCD mode");
 }
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  
   
   //push-button configuration
   for (int i = 0; i < RADIO_BUTTONS; i++) //exclude the volume ones
@@ -68,8 +64,6 @@ void setup() {
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK,BRIGNTNESS_DATA);
-  //volumeEncoder.begin();
-  //brightnessEncoder.begin();
   attachPCINT(digitalPinToPCINT(VOL_CLK),interruptVolume,CHANGE);
   attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON),interruptPause,FALLING);
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK),interruptBrightness,CHANGE);
@@ -97,12 +91,13 @@ void RadioOutput(short step)
 
 void loop() {
   // put your main code here, to run repeatedly:
-  //Serial.println("main");
+  Serial.println("main");
   //volumeEncoder.readAB();
   //brightnessEncoder.readAB();
   //human_interface.SetLEDs(volumeEncoder.getPosition()+10);
   //human_interface.SetBrightness(brightnessEncoder.getPosition());
-  human_interface.SetLEDs(rpm*10);
-  
-  delay(250);
+  human_interface.setHUD(rpm*10,100);
+  human_interface.updateHUD();
+
+  delay(1000);
 }
