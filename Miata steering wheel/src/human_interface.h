@@ -76,8 +76,8 @@ private:
         delay(300);
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            SetLEDs((i + 1) * 10);
-            delay(1000);
+            SetLEDs((i + 1) * 10 +5);
+            delay(100);
         }
 
         Serial.println("LED configuration DONE");
@@ -163,6 +163,27 @@ public:
      * */
     void SetLEDs(unsigned short rpmDC)
     {
+        Serial.println(rpmDC);
+        
+        //shiftlight needs to happen asap
+        if (rpmDC >= SHIFTLIGHT_RPM_DC)
+        {
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+                ledbar[i] = CRGB::Blue;
+                delay(LED_REFRESHRATE);
+            }
+            FastLED.show();
+            delay(100);
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+                ledbar[i] = CRGB::Black;
+                delay(LED_REFRESHRATE);
+            }
+            FastLED.show();
+            return;
+        }
+        
 
         offled = map(rpmDC, 0, SHIFTLIGHT_RPM_DC, NUM_LEDS, 0);
 
@@ -174,7 +195,29 @@ public:
 
         for (int i = offled; i < NUM_LEDS; i++) //the leds are mounted upside down
         {
+            //those are the leds on
             ledbar[i] = CRGB::Purple;
+            //adding the color logic
+            if (i > GREEN_LED_INDEX)
+            {
+                ledbar[i] = CRGB::Green;
+                delay(LED_REFRESHRATE);
+                continue;
+            }
+            if (i <= GREEN_LED_INDEX && i > YELLOW_LED_INDEX)
+            {
+                ledbar[i] = CRGB::Yellow;
+                delay(LED_REFRESHRATE);
+                continue;
+            }
+            if (i <= YELLOW_LED_INDEX)
+            {
+                ledbar[i] = CRGB::Red;
+                delay(LED_REFRESHRATE);
+                continue;
+            }
+            
+
             delay(LED_REFRESHRATE);
         }
 
