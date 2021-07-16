@@ -58,10 +58,11 @@
 #define NUM_LEDS            8
 #define LED_TYPE            WS2812B
 #define COLOR_ORDER         GRB
-#define LED_REFRESHRATE     5//ms
+#define LED_DELAY     5//ms
 #define GREEN_LED_INDEX     4
 #define YELLOW_LED_INDEX    1
 #define RED_LED_INDEX       0
 #define GREEN_RPM_DC        30 //4000RPM should be more or less 60% of DC
 #define YELLOW_RPM_DC       50 //5500RPM should be more or less 80% of DC
-#define SHIFTLIGHT_RPM_DC   80      
+#define SHIFTLIGHT_RPM_DC   80
+#define MINRPM              5      

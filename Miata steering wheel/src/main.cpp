@@ -77,7 +77,7 @@ void loop() {
   volumewheel.Steps();
   radioOutputStep = volumecontroller.ChangeVolume(volumewheel.Steps());
   RadioOutput (radioOutputStep);
-
+  human_interface.SetLEDs(volumewheel.Steps()*10);
   if (InputCleanup(digitalRead(PAUSE_BUTTON), buttonState[6]))
   {
     Serial.print("button state:");

@@ -52,28 +52,28 @@ private:
     {
         FastLED.addLeds<LED_TYPE, LED_PIN, COLOR_ORDER>(ledbar, NUM_LEDS);
         FastLED.setBrightness(1);
-        for (int i = 0; i < NUM_LEDS; i++)
-        {
-            ledbar[i] = CRGB::Red;
-            delay(LED_REFRESHRATE);
-            FastLED.show();
-        }
-        delay(300);
-        for (int i = 0; i < NUM_LEDS; i++)
-        {
-            ledbar[i] = CRGB::Green;
-            delay(LED_REFRESHRATE);
-            FastLED.show();
-        }
-        delay(300);
-        for (int i = 0; i < NUM_LEDS; i++)
-        {
-            ledbar[i] = CRGB::Blue;
-            delay(LED_REFRESHRATE);
-            FastLED.show();
-        }
-        FastLED.show();
-        delay(300);
+        // for (int i = 0; i < NUM_LEDS; i++)
+        // {
+        //     ledbar[i] = CRGB::Red;
+        //     delay(LED_DELAY);
+        //     FastLED.show();
+        // }
+        // delay(300);
+        // for (int i = 0; i < NUM_LEDS; i++)
+        // {
+        //     ledbar[i] = CRGB::Green;
+        //     delay(LED_DELAY);
+        //     FastLED.show();
+        // }
+        // delay(300);
+        // for (int i = 0; i < NUM_LEDS; i++)
+        // {
+        //     ledbar[i] = CRGB::Blue;
+        //     delay(LED_DELAY);
+        //     FastLED.show();
+        // }
+        // FastLED.show();
+        // delay(300);
         for (int i = 0; i < NUM_LEDS; i++)
         {
             SetLEDs((i + 1) * 10 +5);
@@ -163,22 +163,26 @@ public:
      * */
     void SetLEDs(unsigned short rpmDC)
     {
-        Serial.println(rpmDC);
+        if (rpmDC == 0 || rpmDC > 100) //if i am outside my scope i exit
+        {
+            return;
+        }
         
+        //Serial.println(rpmDC);
         //shiftlight needs to happen asap
         if (rpmDC >= SHIFTLIGHT_RPM_DC)
         {
             for (int i = 0; i < NUM_LEDS; i++)
             {
                 ledbar[i] = CRGB::Blue;
-                delay(LED_REFRESHRATE);
+                delay(LED_DELAY);
             }
             FastLED.show();
             delay(100);
             for (int i = 0; i < NUM_LEDS; i++)
             {
                 ledbar[i] = CRGB::Black;
-                delay(LED_REFRESHRATE);
+                delay(LED_DELAY);
             }
             FastLED.show();
             return;
@@ -186,11 +190,12 @@ public:
         
 
         offled = map(rpmDC, 0, SHIFTLIGHT_RPM_DC, NUM_LEDS, 0);
+        //Serial.println(offled);
 
         for (int i = 0; i <= offled; i++)
         {
             ledbar[i] = CRGB::Black;
-            delay(LED_REFRESHRATE);
+            delay(LED_DELAY);
         }
 
         for (int i = offled; i < NUM_LEDS; i++) //the leds are mounted upside down
@@ -201,26 +206,23 @@ public:
             if (i > GREEN_LED_INDEX)
             {
                 ledbar[i] = CRGB::Green;
-                delay(LED_REFRESHRATE);
+                delay(LED_DELAY);
                 continue;
             }
             if (i <= GREEN_LED_INDEX && i > YELLOW_LED_INDEX)
             {
                 ledbar[i] = CRGB::Yellow;
-                delay(LED_REFRESHRATE);
+                delay(LED_DELAY);
                 continue;
             }
             if (i <= YELLOW_LED_INDEX)
             {
                 ledbar[i] = CRGB::Red;
-                delay(LED_REFRESHRATE);
+                delay(LED_DELAY);
                 continue;
             }
-            
-
-            delay(LED_REFRESHRATE);
+            //delay(LED_DELAY);
         }
-
         FastLED.show();
     }
 };
