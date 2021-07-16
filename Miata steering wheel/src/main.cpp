@@ -18,6 +18,7 @@
 unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
 unsigned short buttonState[RADIO_BUTTONS] = {0};
 unsigned short radioOutputStep=0;
+int rpm = 0;
 
 //RotaryEncoderAdvanced<float> volumeEncoder (VOL_CLK,VOL_DATA,PAUSE_BUTTON,VOL_SENSITIVITY,-256,+256);
 //RotaryEncoderAdvanced<float> brightnessEncoder(BRIGHTNESS_CLK,BRIGNTNESS_DATA,LCD_MODE_BUTTON,BRIGHTNESS_SENSITIVITY,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD);
@@ -31,7 +32,7 @@ HumanInterface human_interface;
 
 void interruptVolume(){
   //volumeEncoder.readAB();
-  volumewheel.Steps();
+  rpm = volumewheel.Steps();
   //Serial.println("Volume");
   //Serial.println(volumeEncoder.getPosition());
 }
@@ -41,10 +42,7 @@ void interruptPause(){
   
 }
 void interruptBrightness(){
-  //brightnessEncoder.readAB();
-  ledwheel.Steps();
-  //Serial.println("Brightness");
-  //Serial.println(brightnessEncoder.getPosition());
+  human_interface.SetBrightness(ledwheel.Steps());
 }
 void interruptLCDmode(){
   //brightnessEncoder.readPushButton();
@@ -73,9 +71,9 @@ void setup() {
   //volumeEncoder.begin();
   //brightnessEncoder.begin();
   attachPCINT(digitalPinToPCINT(VOL_CLK),interruptVolume,CHANGE);
-  attachPCINT(digitalPinToPCINT(PAUSE_BUTTON),interruptPause,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON),interruptPause,FALLING);
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK),interruptBrightness,CHANGE);
-  attachPCINT(digitalPinToPCINT(LCD_MODE_BUTTON),interruptLCDmode,CHANGE);
+  attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON),interruptLCDmode,FALLING);
 
 
   delay(100);
@@ -104,8 +102,7 @@ void loop() {
   //brightnessEncoder.readAB();
   //human_interface.SetLEDs(volumeEncoder.getPosition()+10);
   //human_interface.SetBrightness(brightnessEncoder.getPosition());
-  human_interface.SetLEDs(volumewheel.Steps()*10);
-  human_interface.SetBrightness(ledwheel.Steps());
-
-  //delay(1000);
+  human_interface.SetLEDs(rpm*10);
+  
+  delay(250);
 }

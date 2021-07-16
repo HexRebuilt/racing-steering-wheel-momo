@@ -13,10 +13,10 @@
 //encoders pin
 #define VOL_CLK                 13
 #define VOL_DATA                8
-#define PAUSE_BUTTON            12
+#define PAUSE_BUTTON            3
 #define BRIGHTNESS_CLK          11
 #define BRIGNTNESS_DATA         9
-#define LCD_MODE_BUTTON         10
+#define LCD_MODE_BUTTON         2
 #define BRIGHTNESS_SENSITIVITY  1
 #define VOL_SENSITIVITY         1
 
@@ -66,5 +66,6 @@
 #define RED_LED_INDEX       0
 #define GREEN_RPM_DC        30 //4000RPM should be more or less 60% of DC
 #define YELLOW_RPM_DC       50 //5500RPM should be more or less 80% of DC
+#define RED_RPM_DC          80
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5      
