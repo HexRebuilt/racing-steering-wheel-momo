@@ -3,13 +3,15 @@
 #include <stdlib.h>
 #include <SPI.h>
 #include <LedControl.h>
+#include <PinChangeInterrupt.h>
+#include <RotaryEncoderAdvanced.h>
 
 #include "defines.h"
 #include "ignore_undesired_press.h"
-#include "encoder.h"
 #include "volume.h"
 #include "human_interface.h"
 #include "digital_potentiometer.h"
+#include "encoder.h"
 
 
 
@@ -17,12 +19,37 @@ unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON
 unsigned short buttonState[RADIO_BUTTONS] = {0};
 unsigned short radioOutputStep=0;
 
+//RotaryEncoderAdvanced<float> volumeEncoder (VOL_CLK,VOL_DATA,PAUSE_BUTTON,VOL_SENSITIVITY,-256,+256);
+//RotaryEncoderAdvanced<float> brightnessEncoder(BRIGHTNESS_CLK,BRIGNTNESS_DATA,LCD_MODE_BUTTON,BRIGHTNESS_SENSITIVITY,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD);
+
 Encoder_KY040 volumewheel,ledwheel;
+
 VolumeController volumecontroller;
 
 HumanInterface human_interface;
 //LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
 
+void interruptVolume(){
+  //volumeEncoder.readAB();
+  volumewheel.Steps();
+  //Serial.println("Volume");
+  //Serial.println(volumeEncoder.getPosition());
+}
+void interruptPause(){
+  //volumeEncoder.readPushButton();
+  Serial.println("Pause");
+  
+}
+void interruptBrightness(){
+  //brightnessEncoder.readAB();
+  ledwheel.Steps();
+  //Serial.println("Brightness");
+  //Serial.println(brightnessEncoder.getPosition());
+}
+void interruptLCDmode(){
+  //brightnessEncoder.readPushButton();
+  Serial.println("LCD mode");
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -39,23 +66,25 @@ void setup() {
   //output pins
   pinMode(RADIO_OUT,OUTPUT);
   setPotentiometer(RADIO_OUT,NO_OUT);
-  //Serial.println("radio 0");
-  //delay(5000);
-  //setPotentiometer(RADIO_OUT,RADIO_BUTTONS);
-
-  pinMode(LCD_MODE_BUTTON,INPUT);
-    
-  //setting up rotary encoder
+  
+  //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK,VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK,BRIGNTNESS_DATA);
-  
+  //volumeEncoder.begin();
+  //brightnessEncoder.begin();
+  attachPCINT(digitalPinToPCINT(VOL_CLK),interruptVolume,CHANGE);
+  attachPCINT(digitalPinToPCINT(PAUSE_BUTTON),interruptPause,CHANGE);
+  attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK),interruptBrightness,CHANGE);
+  attachPCINT(digitalPinToPCINT(LCD_MODE_BUTTON),interruptLCDmode,CHANGE);
+
+
   delay(100);
   Serial.println("Pin configuration DONE");
   
   human_interface.Initialize();
 
   
-
+  Serial.println("Configuration DONE");
   delay(DEFAULT_DELAY);
 }
 
@@ -70,25 +99,13 @@ void RadioOutput(short step)
 
 void loop() {
   // put your main code here, to run repeatedly:
-
-  //int sensorValue = digitalRead(MUTEBUTTON); //gives a 0 if it is low and 1 if high
-  
-
-  volumewheel.Steps();
-  radioOutputStep = volumecontroller.ChangeVolume(volumewheel.Steps());
-  RadioOutput (radioOutputStep);
+  //Serial.println("main");
+  //volumeEncoder.readAB();
+  //brightnessEncoder.readAB();
+  //human_interface.SetLEDs(volumeEncoder.getPosition()+10);
+  //human_interface.SetBrightness(brightnessEncoder.getPosition());
   human_interface.SetLEDs(volumewheel.Steps()*10);
-  if (InputCleanup(digitalRead(PAUSE_BUTTON), buttonState[6]))
-  {
-    Serial.print("button state:");
-    Serial.println(buttonState[6]);
-    Serial.println(digitalRead(LCD_MODE_BUTTON));
-
-  }
-
-  
   human_interface.SetBrightness(ledwheel.Steps());
-  
 
-  delay(DEFAULT_DELAY);
+  //delay(1000);
 }
