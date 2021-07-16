@@ -1,4 +1,4 @@
-#define DEFAULT_DELAY 1
+#define DEFAULT_DELAY 100
 //#define DEBUG
 
 //list of buttons and pins
@@ -51,9 +51,10 @@
 #define LED_BRIGHT_STEP 1 // 255/MAXBRIGHTLCD=17 steps
 
 //LCD spi related constants
-#define LCD_DIN    14 //51
-#define LCD_CLK    15 //52
-#define LCD_CS     16 //53
+#define LCD_DIN         14 //51
+#define LCD_CLK         15 //52
+#define LCD_CS          16 //53
+#define DIGIT_UPDATE_MS 5
 
 //NeoPixel led bar
 #define LED_PIN             7
@@ -68,4 +69,5 @@
 #define YELLOW_RPM_DC       50 //5500RPM should be more or less 80% of DC
 #define RED_RPM_DC          80
 #define SHIFTLIGHT_RPM_DC   80
-#define MINRPM              5      
+#define MINRPM              5 
+#define MAXRPM              7200     
