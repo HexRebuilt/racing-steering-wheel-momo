@@ -163,6 +163,7 @@ public:
      * */
     void SetLEDs(unsigned short rpmDC)
     {
+        //Serial.println(rpmDC);
         if (rpmDC == 0 || rpmDC > 100) //if i am outside my scope i exit
         {
             return;
@@ -172,6 +173,7 @@ public:
         //shiftlight needs to happen asap
         if (rpmDC >= SHIFTLIGHT_RPM_DC)
         {
+            //Serial.println("SHIFTLIGHT");
             for (int i = 0; i < NUM_LEDS; i++)
             {
                 ledbar[i] = CRGB::Blue;
@@ -187,11 +189,9 @@ public:
             FastLED.show();
             return;
         }
-        
 
         offled = map(rpmDC, 0, SHIFTLIGHT_RPM_DC, NUM_LEDS, 0);
-        //Serial.println(offled);
-
+            
         for (int i = 0; i <= offled; i++)
         {
             ledbar[i] = CRGB::Black;
