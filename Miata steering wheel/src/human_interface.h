@@ -15,10 +15,12 @@ class HumanInterface
 private:
     /* data */
     int lcdbrightness = MAX_BRIGHT_LCD, ledbrightness = MAX_BRIGHT_LEDs; //initial percentage
+    int rpm=0,speed=0,rpmDC=0;
     short currentvalue = 0, delta = 0, brightness = 100;
     uint8_t offled = NUM_LEDS; 
     LedControl lcd=LedControl(LCD_DIN,LCD_CLK,LCD_CS,1);
-    String brightchange="";
+    String brightchange="", hud="";
+    boolean isbrightnesschanged = false;
     CRGB ledbar[NUM_LEDS];
 
     void SetTextLCD(String text)
@@ -43,8 +45,8 @@ private:
             {
                 i++;
             }
-
             digit--;
+            delay(DIGIT_UPDATE_MS);
         }
     }
 
@@ -54,7 +56,8 @@ private:
         FastLED.setBrightness(MAX_BRIGHT_LEDs);
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            SetLEDs((i + 1) * 10 +5);
+            setRPMDC((i + 1) * 10+5);
+            updateLEDS();
             delay(50);
         }
 
@@ -74,6 +77,60 @@ public:
         SetTextLCD("-HELL0-");
        //initialize ledbar
         LedSetup();
+    }
+
+    /**
+     * Function that takes the previous data setted by the other functions
+     * and performs an update of the leds and of the lcd
+     * */
+    void updateHUD(){
+        updateLEDS();
+        
+        if (isbrightnesschanged)
+        {
+            SetTextLCD(brightchange);
+            lcd.setIntensity(0, lcdbrightness);
+            FastLED.setBrightness(ledbrightness);
+            FastLED.show();
+            delay(300);
+        }
+
+        hud="";
+        if (rpm < 1000)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(rpm);
+        hud.concat(" ");
+        if (speed < 100)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(speed);
+        Serial.println(hud);
+    }
+
+    void setSpeed(int newspeed){
+        speed=newspeed;
+    }
+
+    void setRPMDC(int newRPM_DC){
+        rpmDC = newRPM_DC;
+        rpm = map (rpmDC,0,SHIFTLIGHT_RPM_DC,0,MAXRPM);
+    }
+
+    /**
+     * Function that takes the RPM DC and the speed and creates a string of 8 chars
+     * to be used on the lcd
+     * INPUT: rpmDC is the engine rpm duty cycle, speed is the vehicle speed
+     * */
+
+    void setHUD(int newRPM_DC,int newspeed){
+        
+        setRPMDC(newRPM_DC);
+        setSpeed(newspeed);
+        
+        ;
     }
 
     /**
@@ -123,15 +180,12 @@ public:
             lcdbrightness = MIN_BRIGHT_LCD;
         }
         //changing the brightness
-        lcd.setIntensity(0, lcdbrightness);
         brightness = map (lcdbrightness,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD,10,100);
         Serial.print("new brightness: ");
         Serial.println(brightness);
         brightchange = "L16H ";
         brightchange.concat(brightness);
-        SetTextLCD(brightchange);
-        FastLED.setBrightness(ledbrightness);
-        FastLED.show();
+        isbrightnesschanged=true;
         
     }
 
@@ -139,9 +193,9 @@ public:
      * Function that sets the color and state of the led depending on the RPM.
      * INPUT: Duty-Cycle taken from the engine rpm
      * */
-    void SetLEDs(int rpmDC)
+    void updateLEDS()
     {
-        Serial.println(rpmDC);
+        //Serial.println(rpmDC);
         if (rpmDC == 0 || rpmDC > 100 || rpmDC <0) //if i am outside my scope i exit
         {
             return;
