@@ -12,7 +12,7 @@ private:
     /* data */
 
 protected:
-    short currentvalue = 0, delta = 0;
+    short currentValue = 0, delta = 0;
     boolean isBrightnessChanged = false;
     
 

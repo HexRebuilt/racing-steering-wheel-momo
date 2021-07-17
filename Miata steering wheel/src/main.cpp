@@ -97,13 +97,13 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   Serial.println("main");
-  
+
   lcd8Digit.SetRPMDC(rpm * 10);
-  lcd8Digit.SetSpeed(100);
+  lcd8Digit.SetSpeed(130);
   ledBar.SetRPMDC(rpm * 10);
 
   lcd8Digit.Update();
   ledBar.Update();
 
-  delay(1000);
+  delay(200);
 }

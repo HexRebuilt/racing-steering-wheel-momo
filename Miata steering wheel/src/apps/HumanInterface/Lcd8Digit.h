@@ -33,7 +33,6 @@ private:
                 i++;
             }
             digit--;
-            delay(DIGIT_UPDATE_MS);
         }
     }
 
@@ -54,24 +53,24 @@ public:
 
     void SetBrightness(short value)
     {
-        if (currentvalue == value)
+        if (currentValue == value)
         {
             return; //no action needed
         }
 
-        if (currentvalue < value) //need to increase brightness
+        if (currentValue < value) //need to increase brightness
         {
-            delta = value - currentvalue;
+            delta = value - currentValue;
             //delta = delta / (float) SENSITIVITY;
             lcdbrightness += delta;
         }
         else
         {
-            delta = currentvalue - value;
+            delta = currentValue - value;
             //delta = delta / (float) SENSITIVITY;
             lcdbrightness -= delta;
         }
-        currentvalue = value;
+        currentValue = value;
 
         //keeping the LCD brightness in range
         if (lcdbrightness > MAX_BRIGHT_LCD)
@@ -99,13 +98,17 @@ public:
             isBrightnessChanged = false;
             SetTextLCD(brightChange);
             lcd.setIntensity(0, lcdbrightness);
-            delay(300);
+            delay(500);
         }
 
         hud = "";
         if (rpm < 1000)
         {
-            hud.concat(" ");
+            Serial.println(1000/rpm);
+            for (int i = 0; i < 1000/rpm ; i++)
+            {
+                hud.concat(" ");
+            }
         }
         hud.concat(rpm);
         hud.concat(" ");
