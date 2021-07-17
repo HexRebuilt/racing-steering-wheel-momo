@@ -43,10 +43,10 @@
 #define NO_OUT      0
 
 //steering wheel outputs
-#define MAX_BRIGHT_LEDs 10 //due to power limitations
+#define MAX_BRIGHT_LEDS 10 //due to power limitations
 #define MAX_BRIGHT_LCD  15
 #define MIN_BRIGHT_LCD  1 //to be modified based on needs
-#define MIN_BRIGHT_LEDs 1 //to be modified based on needs
+#define MIN_BRIGHT_LEDS 1 //to be modified based on needs
 #define SENSITIVITY     2
 #define LED_BRIGHT_STEP 1 // 255/MAXBRIGHTLCD=17 steps
 
