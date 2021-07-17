@@ -70,6 +70,12 @@ public:
         //Serial.println(rpmDC);
         if (rpmDC == 0 || rpmDC > 100 || rpmDC < 0) //if i am outside my scope i exit
         {
+            for (int i = 0; i < NUM_LEDS; i++)
+            {
+                leds[i] = CRGB::Black;
+                delay(LED_DELAY);
+            }
+            FastLED.show();
             return;
         }
 
@@ -94,7 +100,7 @@ public:
         }
 
         offled = (uint8_t)map(rpmDC, 0, SHIFTLIGHT_RPM_DC, NUM_LEDS, 0);
-
+        //Serial.println(offled);
         for (int i = 0; i < offled; i++)
         {
             leds[i] = CRGB::Black;

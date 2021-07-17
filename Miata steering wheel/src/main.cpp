@@ -105,5 +105,5 @@ void loop()
   lcd8Digit.Update();
   ledBar.Update();
 
-  delay(200);
+  delay(DEFAULT_DELAY);
 }

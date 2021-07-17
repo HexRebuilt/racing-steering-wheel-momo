@@ -104,7 +104,7 @@ public:
         hud = "";
         if (rpm < 1000)
         {
-            Serial.println(1000/rpm);
+            //Serial.println(1000/rpm);
             for (int i = 0; i < 1000/rpm ; i++)
             {
                 hud.concat(" ");
@@ -117,7 +117,7 @@ public:
             hud.concat(" ");
         }
         hud.concat(speed);
-        Serial.println(hud);
+        //Serial.println(hud);
         SetTextLCD(hud);
     }
 

@@ -1,4 +1,4 @@
-#define DEFAULT_DELAY 100
+#define DEFAULT_DELAY 10
 //#define DEBUG
 
 //list of buttons and pins
