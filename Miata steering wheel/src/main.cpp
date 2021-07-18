@@ -65,9 +65,9 @@ void setup()
   //output pins
   pinMode(RADIO_OUT, OUTPUT);
   pinMode(SPI_CLOCK,OUTPUT);
-  pinMode(SPI_DATA,OUTPUT);
+  pinMode(SPI_DATA, OUTPUT);
   setPotentiometer(RADIO_OUT, NO_OUT);
-
+  SPISettings(10000000, MSBFIRST, SPI_MODE3);
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK, VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK, BRIGNTNESS_DATA);
