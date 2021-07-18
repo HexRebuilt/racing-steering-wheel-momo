@@ -64,6 +64,8 @@ void setup()
   SPI.begin();
   //output pins
   pinMode(RADIO_OUT, OUTPUT);
+  pinMode(SPI_CLOCK,OUTPUT);
+  pinMode(SPI_DATA,OUTPUT);
   setPotentiometer(RADIO_OUT, NO_OUT);
 
   //set encoderpins as Pin Change Interrupts
@@ -103,7 +105,13 @@ void loop()
   ledBar.SetRPMDC(rpm * 10);
 
   lcd8Digit.Update();
-  ledBar.Update();
+  ledBar.Update();  //testfunction for digital potentiometer
+  
+  setPotentiometer(RADIO_OUT,rpm);
+  int read = analogRead(A0);
+  Serial.print("Analog read A0: ");
+  Serial.println(read);
+  delay(500);
 
   delay(DEFAULT_DELAY);
 }
