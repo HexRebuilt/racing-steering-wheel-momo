@@ -93,11 +93,8 @@ void setup()
   delay(DEFAULT_DELAY);
 
   //testing
-  Serial.println(gps.time.hour());
-  Serial.println(gps.time.minute());
-  Serial.println(gps.time.second());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
-  lcd8Digit.UpMenu();
+  lcd8Digit.DownMenu();
 }
 
 /**
@@ -116,9 +113,9 @@ void loop()
 
   lcd8Digit.SetRPMDC(rpm * 10);
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
+  //lcd8Digit.SetTachometer();
+  lcd8Digit.Update();
   ledBar.SetRPMDC(rpm * 10);
-
-  lcd8Digit.SetTachometer();
   ledBar.Update();  //testfunction for digital potentiometer
   
 
@@ -127,8 +124,6 @@ void loop()
   // Serial.print("Analog read A0: ");
   // Serial.println(read);
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
-  delay(500);
-  //lcd8Digit.TimeToReset();
 
   
   delay(DEFAULT_DELAY);

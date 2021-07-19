@@ -5,13 +5,14 @@ class Lcd8Digit : public HumanInterface
 private:
     /* data */
     LedControl lcd = LedControl(LCD_DIN, LCD_CLK, LCD_CS, 1);
-    int lcdbrightness = MAX_BRIGHT_LCD; //initial level
-    int rpm = 0, speed = 0, satellites = 0, hours = 0, minutes =0, seconds =0; //oiltemp =0, watertmp=0;
+    int lcdbrightness = MAX_BRIGHT_LCD;                                          //initial level
+    int rpm = 0, speed = 0, satellites = 0, hours = 0, minutes = 0, seconds = 0; //oiltemp =0, watertmp=0;
     short brightness = 100;
     String brightChange = "", hud = "";
-    unsigned long switchtime=0;
+    unsigned long switchtime = 0;
 
-    enum State : uint8_t {
+    enum State : uint8_t
+    {
         tachometer,
         //oil,
         //water
@@ -20,7 +21,7 @@ private:
         satelliteNumber,
         clock,
         end_of_states
-    }; 
+    };
 
     enum State currentstate = tachometer;
 
@@ -49,16 +50,40 @@ private:
             digit--;
         }
     }
-    
-    State DownState (State& toIncrease){
-        return State(toIncrease-1);
+
+    State DownState(State &toIncrease)
+    {
+        return State(toIncrease - 1);
     }
 
-    State UpState (State& toIncrease){
-        return State(toIncrease+1);
+    State UpState(State &toIncrease)
+    {
+        return State(toIncrease + 1);
     }
 
-
+    // hh-mm-secsec WE DO NOT LIKE SS HERE
+    void DisplayClock()
+    {
+        hud = "";
+        if (hours < 10)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(hours);
+        hud.concat("-");
+        if (minutes < 10)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(minutes);
+        hud.concat("-");
+        if (seconds < 10)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(seconds);
+        SetTextLCD(hud);
+    }
 
 public:
     Lcd8Digit(/* args */);
@@ -77,23 +102,27 @@ public:
     /**
      * function used to cycle between the different display state depending on a rocker switch
      * */
-    void UpMenu(){
+    void UpMenu()
+    {
         if (currentstate != end_of_states)
         {
             currentstate = UpState(currentstate);
         }
-        else{
+        else
+        {
             currentstate = State::tachometer;
         }
         switchtime = millis();
     }
 
-    void DownMenu(){
+    void DownMenu()
+    {
         if (currentstate != tachometer)
         {
             currentstate = DownState(currentstate);
         }
-        else{
+        else
+        {
             currentstate = State::clock;
         }
         switchtime = millis();
@@ -165,7 +194,7 @@ public:
         if (rpm < 1000)
         {
             //Serial.println(1000/rpm);
-            for (int i = 0; i < 1000/rpm ; i++)
+            for (int i = 0; i < 1000 / rpm; i++)
             {
                 hud.concat(" ");
             }
@@ -195,52 +224,43 @@ public:
      * Function that sets the time
      * INPUT: hours,minutes,seconds
      * */
-    void SetTime(int h, int m, int s){
+    void SetTime(int h, int m, int s)
+    {
         hours = h;
         minutes = m;
         seconds = s;
     }
 
-
-
-    // hh-mm-secsec WE DO NOT LIKE SS HERE
-    void DisplayClock(){
-        hud="";
-        hud.concat(hours);
-        hud.concat("-");
-        hud.concat(minutes);
-        hud.concat("-");
-        hud.concat(seconds);
-        
-    }
-
     /**
      * function that use the internal enum variable to choose what to display
      * */
-    void Update(){
+    void Update()
+    {
+        //Serial.println(currentstate);
         switch (currentstate)
         {
         case tachometer:
             SetTachometer();
             break;
         case bright:
-
+            //Serial.println("bright");
             TimeToReset();
             break;
         case satelliteNumber:
-        
+            //Serial.println("satellites");
             break;
         case clock:
-            TimeToReset();
+            //Serial.println("clock");
             DisplayClock();
+            TimeToReset();
             break;
         default:
+            //Serial.println("tachometer");
             currentstate = tachometer;
             SetTachometer();
             break;
         }
     }
-
 };
 
 Lcd8Digit::Lcd8Digit(/* args */)
