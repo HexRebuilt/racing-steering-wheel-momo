@@ -9,6 +9,7 @@ private:
     int rpm = 0, speed = 0, satellites = 0, hours = 0, minutes =0, seconds =0; //oiltemp =0, watertmp=0;
     short brightness = 100;
     String brightChange = "", hud = "";
+    unsigned long switchtime=0;
 
     enum State : uint8_t {
         tachometer,
@@ -57,9 +58,22 @@ private:
         return State(toIncrease+1);
     }
 
+
+
 public:
     Lcd8Digit(/* args */);
 
+    //function that checks if the difference between the switchtime and the current time is less than
+    // the time time to reset
+    //. if not it does reset it with the lcd menu state
+    void TimeToReset()
+    {
+        if ((millis() - switchtime) >= MILLISECONDS_PER_MENU)
+        { //i need to reset the state of the lcd
+            Serial.println("Resetting LCD state");
+            currentstate = tachometer;
+        }
+    }
     /**
      * function used to cycle between the different display state depending on a rocker switch
      * */
@@ -71,6 +85,7 @@ public:
         else{
             currentstate = State::tachometer;
         }
+        switchtime = millis();
     }
 
     void DownMenu(){
@@ -81,6 +96,7 @@ public:
         else{
             currentstate = State::clock;
         }
+        switchtime = millis();
     }
 
     void Initialize()
@@ -91,7 +107,6 @@ public:
         lcd.setIntensity(0, MAX_BRIGHT_LCD);
         lcd.clearDisplay(0);
         Serial.println("LCD configuration DONE");
-
         SetTextLCD("-HELL0-");
     }
 
@@ -132,9 +147,10 @@ public:
         brightChange = "L16H ";
         brightChange.concat(brightness);
         isBrightnessChanged = true;
+        currentstate = bright; //need a context switch
     }
 
-    void Update()
+    void SetTachometer()
     {
 
         if (isBrightnessChanged)
@@ -174,6 +190,57 @@ public:
     {
         rpm = map(newRPM_DC, 0, SHIFTLIGHT_RPM_DC, 0, MAXRPM);
     }
+
+    /**
+     * Function that sets the time
+     * INPUT: hours,minutes,seconds
+     * */
+    void SetTime(int h, int m, int s){
+        hours = h;
+        minutes = m;
+        seconds = s;
+    }
+
+
+
+    // hh-mm-secsec WE DO NOT LIKE SS HERE
+    void DisplayClock(){
+        hud="";
+        hud.concat(hours);
+        hud.concat("-");
+        hud.concat(minutes);
+        hud.concat("-");
+        hud.concat(seconds);
+        
+    }
+
+    /**
+     * function that use the internal enum variable to choose what to display
+     * */
+    void Update(){
+        switch (currentstate)
+        {
+        case tachometer:
+            SetTachometer();
+            break;
+        case bright:
+
+            TimeToReset();
+            break;
+        case satelliteNumber:
+        
+            break;
+        case clock:
+            TimeToReset();
+            DisplayClock();
+            break;
+        default:
+            currentstate = tachometer;
+            SetTachometer();
+            break;
+        }
+    }
+
 };
 
 Lcd8Digit::Lcd8Digit(/* args */)

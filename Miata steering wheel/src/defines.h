@@ -1,5 +1,5 @@
 #define DEFAULT_DELAY 10
-//#define DEBUG
+
 
 //list of buttons and pins
 #define ACTIVE_BUTTON       PH6 
@@ -49,6 +49,8 @@
 #define MIN_BRIGHT_LEDS 1 //to be modified based on needs
 #define SENSITIVITY     2
 #define LED_BRIGHT_STEP 1 // 255/MAXBRIGHTLCD=17 steps
+#define SECONDS_PER_MENU   5//seconds defined before resetting the menu to the main one
+#define MILLISECONDS_PER_MENU 5000
 
 //LCD spi related constants
 #define LCD_DIN         14 //51
