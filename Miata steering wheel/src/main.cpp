@@ -105,7 +105,7 @@ void RadioOutput(short step)
 void loop()
 {
   // put your main code here, to run repeatedly:
-  Serial.println("main");
+  //Serial.println("main");
 
   lcd8Digit.SetRPMDC(rpm * 10);
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
@@ -119,6 +119,6 @@ void loop()
   // Serial.print("Analog read A0: ");
   // Serial.println(read);
   // delay(500);
-
+  lcd8Digit.DownMenu();
   delay(DEFAULT_DELAY);
 }

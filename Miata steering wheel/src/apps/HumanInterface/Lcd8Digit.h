@@ -6,9 +6,22 @@ private:
     /* data */
     LedControl lcd = LedControl(LCD_DIN, LCD_CLK, LCD_CS, 1);
     int lcdbrightness = MAX_BRIGHT_LCD; //initial level
-    int rpm = 0, speed = 0;
+    int rpm = 0, speed = 0, satellites = 0, hours = 0, minutes =0, seconds =0; //oiltemp =0, watertmp=0;
     short brightness = 100;
     String brightChange = "", hud = "";
+
+    enum State : uint8_t {
+        tachometer,
+        //oil,
+        //water
+        //combinedtemperatures
+        bright,
+        satelliteNumber,
+        clock,
+        end_of_states
+    }; 
+
+    enum State currentstate = tachometer;
 
     void SetTextLCD(String text)
     {
@@ -35,9 +48,40 @@ private:
             digit--;
         }
     }
+    
+    State DownState (State& toIncrease){
+        return State(toIncrease-1);
+    }
+
+    State UpState (State& toIncrease){
+        return State(toIncrease+1);
+    }
 
 public:
     Lcd8Digit(/* args */);
+
+    /**
+     * function used to cycle between the different display state depending on a rocker switch
+     * */
+    void UpMenu(){
+        if (currentstate != end_of_states)
+        {
+            currentstate = UpState(currentstate);
+        }
+        else{
+            currentstate = State::tachometer;
+        }
+    }
+
+    void DownMenu(){
+        if (currentstate != tachometer)
+        {
+            currentstate = DownState(currentstate);
+        }
+        else{
+            currentstate = State::clock;
+        }
+    }
 
     void Initialize()
     {
