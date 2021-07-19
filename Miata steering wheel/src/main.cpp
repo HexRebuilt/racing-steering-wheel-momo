@@ -5,6 +5,7 @@
 #include <LedControl.h>
 #include <PinChangeInterrupt.h>
 #include <RotaryEncoderAdvanced.h>
+#include <TinyGPS++.h>
 
 #include "defines.h"
 #include "ignore_undesired_press.h"
@@ -29,6 +30,8 @@ VolumeController volumecontroller;
 
 Lcd8Digit lcd8Digit;
 LedBar ledBar;
+
+TinyGPSPlus gps;
 
 void interruptVolume()
 {
@@ -82,6 +85,10 @@ void setup()
   lcd8Digit.Initialize();
   ledBar.Initialize();
 
+  //gps configuration
+  Serial1.begin(GPSBaud);
+  Serial.println("GPS STARTED");
+
   Serial.println("Configuration DONE");
   delay(DEFAULT_DELAY);
 }
@@ -101,17 +108,17 @@ void loop()
   Serial.println("main");
 
   lcd8Digit.SetRPMDC(rpm * 10);
-  lcd8Digit.SetSpeed(130);
+  lcd8Digit.SetSpeed((int)gps.speed.kmph());
   ledBar.SetRPMDC(rpm * 10);
 
   lcd8Digit.Update();
   ledBar.Update();  //testfunction for digital potentiometer
   
-  setPotentiometer(RADIO_OUT,rpm);
-  int read = analogRead(A0);
-  Serial.print("Analog read A0: ");
-  Serial.println(read);
-  delay(500);
+  // setPotentiometer(RADIO_OUT,rpm);
+  // int read = analogRead(A0);
+  // Serial.print("Analog read A0: ");
+  // Serial.println(read);
+  // delay(500);
 
   delay(DEFAULT_DELAY);
 }

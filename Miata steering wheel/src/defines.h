@@ -71,3 +71,6 @@
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5 
 #define MAXRPM              7200     
+
+//GPS stuff
+#define GPSBaud 9600
