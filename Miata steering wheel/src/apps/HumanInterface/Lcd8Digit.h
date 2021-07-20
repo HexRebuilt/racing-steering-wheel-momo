@@ -17,9 +17,9 @@ private:
         //oil,
         //water
         //combinedtemperatures
-        bright,
         satelliteNumber,
         clock,
+        bright,
         end_of_states
     };
 
@@ -85,9 +85,10 @@ private:
         SetTextLCD(hud);
     }
 
-    void Satellites(){
-        hud =" 5A  ";//need to find a way to create a T
-        if (satellites<10)
+    void Satellites()
+    {
+        hud = " 5A  "; //need to find a way to create a T
+        if (satellites < 10)
         {
             hud.concat(" ");
         }
@@ -95,22 +96,37 @@ private:
         SetTextLCD(hud);
     }
 
+    //changing the brightness
     void BrightChange()
     {
-        //changing the brightness
         brightChange = "L16H ";
         brightChange.concat(brightness);
-        if (isBrightnessChanged)
-        {
-            isBrightnessChanged = false;
-            SetTextLCD(brightChange);
-            lcd.setIntensity(0, lcdbrightness);
-            //delay(500);
-        }
+        isBrightnessChanged = false;
+        SetTextLCD(brightChange);
+        lcd.setIntensity(0, lcdbrightness);
     }
 
-public:
-    Lcd8Digit(/* args */);
+    void SetTachometer()
+    {
+        hud = "";
+        if (rpm < 1000)
+        {
+            //Serial.println(1000/rpm);
+            for (int i = 0; i < 1000 / rpm; i++)
+            {
+                hud.concat(" ");
+            }
+        }
+        hud.concat(rpm);
+        hud.concat(" ");
+        if (speed < 100)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(speed);
+        //Serial.println(hud);
+        SetTextLCD(hud);
+    }
 
     //function that checks if the difference between the switchtime and the current time is less than
     // the time time to reset
@@ -123,6 +139,11 @@ public:
             currentstate = tachometer;
         }
     }
+
+public:
+    Lcd8Digit(/* args */);
+
+
     /**
      * function used to cycle between the different display state depending on a rocker switch
      * */
@@ -147,7 +168,7 @@ public:
         }
         else
         {
-            currentstate = State::clock;
+            currentstate = State::bright;
         }
         switchtime = millis();
     }
@@ -161,68 +182,6 @@ public:
         lcd.clearDisplay(0);
         Serial.println("LCD configuration DONE");
         SetTextLCD("-HELL0-");
-    }
-
-    void SetBrightness(short value)
-    {
-        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
-        Serial.print("new brightness: ");
-        Serial.println(brightness);
-
-        if (currentValue == value)
-        {
-            return; //no action needed
-        }
-
-        if (currentValue < value) //need to increase brightness
-        {
-            delta = value - currentValue;
-            //delta = delta / (float) SENSITIVITY;
-            lcdbrightness += delta;
-        }
-        else
-        {
-            delta = currentValue - value;
-            //delta = delta / (float) SENSITIVITY;
-            lcdbrightness -= delta;
-        }
-        currentValue = value;
-
-        //keeping the LCD brightness in range
-        if (lcdbrightness > MAX_BRIGHT_LCD)
-        {
-            lcdbrightness = MAX_BRIGHT_LCD;
-        }
-        if (lcdbrightness < MIN_BRIGHT_LCD)
-        {
-            lcdbrightness = MIN_BRIGHT_LCD;
-        }
-        isBrightnessChanged = true;
-        currentstate = bright; //need a context switch
-        switchtime = millis();
-        
-    }
-
-    void SetTachometer()
-    {
-        hud = "";
-        if (rpm < 1000)
-        {
-            //Serial.println(1000/rpm);
-            for (int i = 0; i < 1000 / rpm; i++)
-            {
-                hud.concat(" ");
-            }
-        }
-        hud.concat(rpm);
-        hud.concat(" ");
-        if (speed < 100)
-        {
-            hud.concat(" ");
-        }
-        hud.concat(speed);
-        //Serial.println(hud);
-        SetTextLCD(hud);
     }
 
     void SetSpeed(int newSpeed)
@@ -257,11 +216,7 @@ public:
         case tachometer:
             SetTachometer();
             break;
-        case bright:
-            //Serial.println("bright");
-            BrightChange();
-            TimeToReset();
-            break;
+
         case satelliteNumber:
             //Serial.println("satellites");
             Satellites();
@@ -272,6 +227,11 @@ public:
             DisplayClock();
             TimeToReset();
             break;
+        case bright:
+            //Serial.println("bright");
+            BrightChange();
+            TimeToReset();
+            break;
         default:
             //Serial.println("tachometer");
             currentstate = tachometer;
@@ -279,6 +239,45 @@ public:
             break;
         }
     }
+  void SetBrightness(short value)
+    {
+        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
+        Serial.print("new brightness: ");
+        Serial.println(brightness);
+
+        if (currentValue == value)
+        {
+            return; //no action needed
+        }
+
+        if (currentValue < value) //need to increase brightness
+        {
+            delta = value - currentValue;
+            //delta = delta / (float) SENSITIVITY;
+            lcdbrightness += delta;
+        }
+        else
+        {
+            delta = currentValue - value;
+            //delta = delta / (float) SENSITIVITY;
+            lcdbrightness -= delta;
+        }
+        currentValue = value;
+
+        //keeping the LCD brightness in range
+        if (lcdbrightness > MAX_BRIGHT_LCD)
+        {
+            lcdbrightness = MAX_BRIGHT_LCD;
+        }
+        if (lcdbrightness < MIN_BRIGHT_LCD)
+        {
+            lcdbrightness = MIN_BRIGHT_LCD;
+        }
+        //isBrightnessChanged = true;
+        currentstate = bright; //need a context switch
+        switchtime = millis();
+    }
+
 };
 
 Lcd8Digit::Lcd8Digit(/* args */)

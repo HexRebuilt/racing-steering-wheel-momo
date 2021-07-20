@@ -110,8 +110,8 @@ void loop()
 
   lcd8Digit.SetRPMDC(rpm * 10);
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
-  //lcd8Digit.SetTachometer();
   lcd8Digit.Update();
+  
   ledBar.SetRPMDC(rpm * 10);
   ledBar.Update();  //testfunction for digital potentiometer
   
