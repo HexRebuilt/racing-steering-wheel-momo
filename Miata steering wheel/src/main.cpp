@@ -92,9 +92,6 @@ void setup()
   Serial.println("Configuration DONE");
   delay(DEFAULT_DELAY);
 
-  //testing
-  lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
-  lcd8Digit.DownMenu();
 }
 
 /**

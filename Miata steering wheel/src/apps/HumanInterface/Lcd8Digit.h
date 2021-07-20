@@ -85,6 +85,30 @@ private:
         SetTextLCD(hud);
     }
 
+    void Satellites(){
+        hud =" 5A  ";//need to find a way to create a T
+        if (satellites<10)
+        {
+            hud.concat(" ");
+        }
+        hud.concat(satellites);
+        SetTextLCD(hud);
+    }
+
+    void BrightChange()
+    {
+        //changing the brightness
+        brightChange = "L16H ";
+        brightChange.concat(brightness);
+        if (isBrightnessChanged)
+        {
+            isBrightnessChanged = false;
+            SetTextLCD(brightChange);
+            lcd.setIntensity(0, lcdbrightness);
+            //delay(500);
+        }
+    }
+
 public:
     Lcd8Digit(/* args */);
 
@@ -141,6 +165,10 @@ public:
 
     void SetBrightness(short value)
     {
+        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
+        Serial.print("new brightness: ");
+        Serial.println(brightness);
+
         if (currentValue == value)
         {
             return; //no action needed
@@ -169,27 +197,14 @@ public:
         {
             lcdbrightness = MIN_BRIGHT_LCD;
         }
-        //changing the brightness
-        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
-        Serial.print("new brightness: ");
-        Serial.println(brightness);
-        brightChange = "L16H ";
-        brightChange.concat(brightness);
         isBrightnessChanged = true;
         currentstate = bright; //need a context switch
+        switchtime = millis();
+        
     }
 
     void SetTachometer()
     {
-
-        if (isBrightnessChanged)
-        {
-            isBrightnessChanged = false;
-            SetTextLCD(brightChange);
-            lcd.setIntensity(0, lcdbrightness);
-            delay(500);
-        }
-
         hud = "";
         if (rpm < 1000)
         {
@@ -244,10 +259,13 @@ public:
             break;
         case bright:
             //Serial.println("bright");
+            BrightChange();
             TimeToReset();
             break;
         case satelliteNumber:
             //Serial.println("satellites");
+            Satellites();
+            TimeToReset();
             break;
         case clock:
             //Serial.println("clock");
