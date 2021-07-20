@@ -79,4 +79,6 @@
 #define MAXRPM              7200     
 
 //GPS stuff
-#define GPSBaud 9600
+#define GPSBAUD 9600
+#define GPSTX   14
+#define GPSRX   15
