@@ -283,7 +283,10 @@ public:
         currentstate = bright; //need a context switch
         switchtime = millis();
     }
-
+    
+    void SetSatellites(int newSat){
+        satellites = newSat;
+    }
 };
 
 Lcd8Digit::Lcd8Digit(/* args */)

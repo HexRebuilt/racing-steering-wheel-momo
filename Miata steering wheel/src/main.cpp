@@ -242,7 +242,7 @@ void loop()
 
   }
   GPStest();
-
+   lcd8Digit.SetSatellites(gps.satellites.value());
   // setPotentiometer(RADIO_OUT,rpm);
   // int read = analogRead(A0);
   // Serial.print("Analog read A0: ");
