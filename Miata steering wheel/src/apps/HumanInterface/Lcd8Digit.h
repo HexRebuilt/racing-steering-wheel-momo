@@ -109,17 +109,23 @@ private:
     void SetTachometer()
     {
         hud = "";
+        //engine off
+        if (rpm == 0)
+        {
+            hud="  ";
+        }
+        //like 800rpm
         if (rpm < 1000)
         {
-            //Serial.println(1000/rpm);
-            for (int i = 0; i < 1000 / rpm; i++)
-            {
                 hud.concat(" ");
-            }
         }
         hud.concat(rpm);
         hud.concat(" ");
         if (speed < 100)
+        {
+            hud.concat(" ");
+        }
+        if (speed < 10)
         {
             hud.concat(" ");
         }

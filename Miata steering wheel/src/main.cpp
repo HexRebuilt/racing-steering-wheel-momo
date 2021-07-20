@@ -48,6 +48,16 @@ void interruptBrightness()
   ledBar.SetBrightness(ledwheel.Steps());
 }
 
+void menuUp(){
+  Serial.println("Menu UP");
+  lcd8Digit.UpMenu();
+} 
+
+void menuDown(){
+  Serial.println("Menu DOWN");
+  lcd8Digit.DownMenu();
+}
+
 void interruptLCDmode()
 {
   Serial.println("LCD mode");
@@ -69,15 +79,23 @@ void setup()
   pinMode(RADIO_OUT, OUTPUT);
   pinMode(SPI_CLOCK,OUTPUT);
   pinMode(SPI_DATA, OUTPUT);
+ 
   setPotentiometer(RADIO_OUT, NO_OUT);
   SPISettings(10000000, MSBFIRST, SPI_MODE3);
+  
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK, VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK, BRIGNTNESS_DATA);
   attachPCINT(digitalPinToPCINT(VOL_CLK), interruptVolume, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON), interruptPause, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON), interruptPause,FALLING);
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK), interruptBrightness, CHANGE);
   attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON), interruptLCDmode, FALLING);
+  
+  //setting up the other switches as interrupt
+  pinMode(UP_PIN, INPUT_PULLUP);
+  pinMode(DOWN_PIN,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
+  attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
 
   delay(100);
   Serial.println("Pin configuration DONE");
@@ -86,7 +104,7 @@ void setup()
   ledBar.Initialize();
 
   //gps configuration
-  Serial1.begin(GPSBaud);
+  Serial2.begin(GPSBaud);
   Serial.println("GPS STARTED");
 
   Serial.println("Configuration DONE");

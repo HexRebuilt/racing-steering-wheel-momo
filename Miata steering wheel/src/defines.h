@@ -52,10 +52,15 @@
 #define MILLISECONDS_PER_MENU 3000
 
 //LCD spi related constants
-#define LCD_DIN         14 //51
-#define LCD_CLK         15 //52
-#define LCD_CS          16 //53
-#define DIGIT_UPDATE_MS 5
+#define LCD_DIN                 22
+#define LCD_CLK                 23
+#define LCD_CS                  24
+#define DIGIT_UPDATE_MS         5
+
+//menu context switch pins
+#define UP_PIN      18
+#define DOWN_PIN    19
+
 
 //NeoPixel led bar
 #define LED_PIN             7
