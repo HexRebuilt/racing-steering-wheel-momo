@@ -112,12 +112,12 @@ private:
         //engine off
         if (rpm == 0)
         {
-            hud="  ";
+            hud = "  ";
         }
         //like 800rpm
         if (rpm < 1000)
         {
-                hud.concat(" ");
+            hud.concat(" ");
         }
         hud.concat(rpm);
         hud.concat(" ");
@@ -148,7 +148,6 @@ private:
 
 public:
     Lcd8Digit(/* args */);
-
 
     /**
      * function used to cycle between the different display state depending on a rocker switch
@@ -222,7 +221,6 @@ public:
         case tachometer:
             SetTachometer();
             break;
-
         case satelliteNumber:
             //Serial.println("satellites");
             Satellites();
@@ -245,7 +243,8 @@ public:
             break;
         }
     }
-  void SetBrightness(short value)
+    
+    void SetBrightness(short value)
     {
         brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
         Serial.print("new brightness: ");
@@ -283,8 +282,9 @@ public:
         currentstate = bright; //need a context switch
         switchtime = millis();
     }
-    
-    void SetSatellites(int newSat){
+
+    void SetSatellites(int newSat)
+    {
         satellites = newSat;
     }
 };
