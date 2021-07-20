@@ -238,10 +238,7 @@ void loop()
   
 
   while (Serial3.available()){
-    
-    char  read = Serial3.read();
-    Serial.print(read);
-    gps.encode(read);
+    gps.encode(Serial3.read());
 
   }
   GPStest();
