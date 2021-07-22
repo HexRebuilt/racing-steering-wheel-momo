@@ -37,8 +37,7 @@ void interruptVolume()
 }
 void interruptPause()
 {
-  //buttonPressed = pause;
-  //RadioOutput(buttonPressed);
+  inputManager.SetPause();
   Serial.println("Pause");
 }
 void interruptBrightness()

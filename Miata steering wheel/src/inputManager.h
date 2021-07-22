@@ -27,13 +27,14 @@ private:
     pause
   };
 
-  #define INPUT_SUM call_red+back+pause
+#define INPUT_SUM call_red + back + pause
 
   Buttons button = nobutton;
   Rockers rocker = norocker;
   Encoder volumeEncoder = nochange;
   short volumeCurrentState = 0;
-  uint8_t buttonIndex =0;
+  uint8_t buttonIndex = 0;
+  unsigned long switchtime = 0;
 
   unsigned int dacValue = 0;
 
@@ -45,27 +46,40 @@ private:
    * values present
    * OUTPUT: it's a function that return an integer value for the DAC
    * */
-  void  OutputValue()
+  void OutputValue()
   {
     if (button != nobutton)
     {
       buttonIndex = button;
       button = nobutton;
+      switchtime = millis();
       return;
     }
 
     if (rocker != norocker)
     {
-      buttonIndex =  rocker + (uint8_t)Buttons::call_green;
+      buttonIndex = rocker + (uint8_t)Buttons::call_green;
       rocker = norocker;
+      switchtime = millis();
       return;
     }
 
     if (volumeEncoder != nochange)
     {
-      buttonIndex = volumeEncoder + (uint8_t)Buttons::call_green + (uint8_t) Rockers::back;
+      buttonIndex = volumeEncoder + (uint8_t)Buttons::call_green + (uint8_t)Rockers::back;
       volumeEncoder = nochange;
+      switchtime = millis();
       return;
+    }
+  }
+
+  void TimeToResetButtonInput()
+  {
+    if ((millis() - switchtime) >= ANALOG_OUTPUT_TIME && switchtime != 0)
+    { //i need to reset the state of the lcd
+      Serial.println("Resetting DAC output");
+      buttonIndex = 0;
+      switchtime =0;
     }
   }
 
@@ -73,20 +87,17 @@ public:
   InputManager(/* args */);
   ~InputManager();
 
-  void Startup(){
-    dac.begin(0x60);//default address
+  void Startup()
+  {
+    dac.begin(0x60); //default address
     //dac.setVoltage(0,true);
   }
 
   void SetDAC()
   {
     OutputValue();
+    TimeToResetButtonInput();
     dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
-    buttonIndex = 0;
-    if (dacValue != 0)
-    {
-      Serial.println(dacValue);
-    }
     dac.setVoltage(dacValue, false);
     delay(DEFAULT_DELAY);
   }
@@ -103,12 +114,12 @@ public:
       button = nobutton;
       return;
     }
-    
+
     for (uint8_t i = BUTTON_RESISTORS; i > 0; i--)
     {
-      if (analogIn > ((1023 *(BUTTON_RESISTORS - i)) / BUTTON_RESISTORS))
+      if (analogIn > ((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS))
       {
-        button = (Buttons) i;
+        button = (Buttons)i;
       }
     }
     //Serial.println(button);
@@ -121,12 +132,12 @@ public:
       rocker = norocker;
       return;
     }
-    
-    if (analogIn > (1023/ROCKER_RESISTORS))
+
+    if (analogIn > (1023 / ROCKER_RESISTORS))
     {
       rocker = skip;
     }
-    if (analogIn <= (1023/BUTTON_RESISTORS) && analogIn > 10)
+    if (analogIn <= (1023 / BUTTON_RESISTORS) && analogIn > 10)
     {
       rocker = back;
     }
@@ -163,14 +174,11 @@ public:
     //Serial.println(OutputValue());
   }
 
+  void SetPause()
+  {
+    volumeEncoder = pause;
+  }
 };
-
-/**
- * function that modify the output for the radio depending on the input given by the button presse
- * INPUT: takes the button enum to map it to an output value for the DAC
- * */
-//TODO
-//map(id,none,pause,0,DAC_MAX);
 
 InputManager::InputManager(/* args */)
 {

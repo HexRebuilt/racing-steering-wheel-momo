@@ -58,4 +58,5 @@
 #define ROCKER_CHAIN_PIN    A1
 #define BUTTON_RESISTORS    3   //are 4 in the chain
 #define ROCKER_RESISTORS    2   //2 in the chain
-#define THRESHOLD           50
+#define THRESHOLD           50  //to avoid incorrect reading from bad ground
+#define ANALOG_OUTPUT_TIME  50  //ms
