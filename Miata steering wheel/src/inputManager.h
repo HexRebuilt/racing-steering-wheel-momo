@@ -75,11 +75,12 @@ private:
 
   void TimeToResetButtonInput()
   {
-    if ((millis() - switchtime) >= ANALOG_OUTPUT_TIME && switchtime != 0)
-    { //i need to reset the state of the lcd
+    if (switchtime != 0 && (millis() - switchtime) >= ANALOG_OUTPUT_TIME)
+    { 
+      // I need to reset the state of the lcd
       Serial.println("Resetting DAC output");
       buttonIndex = 0;
-      switchtime =0;
+      switchtime = 0;
     }
   }
 
@@ -133,14 +134,7 @@ public:
       return;
     }
 
-    if (analogIn > (1023 / ROCKER_RESISTORS))
-    {
-      rocker = skip;
-    }
-    if (analogIn <= (1023 / BUTTON_RESISTORS) && analogIn > 10)
-    {
-      rocker = back;
-    }
+    rocker = analogIn > (1023 / ROCKER_RESISTORS) ? skip : back;
   }
 
   /**
