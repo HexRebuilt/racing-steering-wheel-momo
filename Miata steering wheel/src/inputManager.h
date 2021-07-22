@@ -1,22 +1,22 @@
+#include <Adafruit_MCP4725.h>
+
 class InputManager
 {
 private:
   enum Buttons : uint8_t
   {
     nobutton,
-    active,
-    call_green,
-    call_redd,
+    //active,
     voice_cmd,
+    call_red,
+    call_green
   };
 
   enum Rockers : uint8_t
   {
     norocker,
     skip,
-    back,
-    upmenu,
-    downmenu
+    back
   };
 
   enum Encoder : uint8_t
@@ -27,17 +27,16 @@ private:
     pause
   };
 
+  #define INPUT_SUM call_red+back+pause
+
   Buttons button = nobutton;
   Rockers rocker = norocker;
   Encoder volumeEncoder = nochange;
-
   short volumeCurrentState = 0;
 
-  uint8_t outputValue = 0;
+  unsigned int dacValue = 0;
 
-public:
-  InputManager(/* args */);
-  ~InputManager();
+  Adafruit_MCP4725 dac;
 
   /**
    * it works sequentially analyzing all the private enums and return the 
@@ -45,8 +44,8 @@ public:
    * values present
    * OUTPUT: it's a function that return an integer value for the DAC
    * */
-
-  int outputRadio(){
+  uint16_t OutputValue()
+  {
     if (button != nobutton)
     {
       return button;
@@ -54,15 +53,33 @@ public:
 
     if (rocker != norocker)
     {
-      return rocker + (uint8_t) Buttons::voice_cmd;
+      return rocker + (uint8_t)Buttons::call_red;
     }
-    
+
     if (volumeEncoder != nochange)
     {
-      return volumeEncoder + (uint8_t) Buttons::voice_cmd + (uint8_t) Encoder::pause;
+      return volumeEncoder + (uint8_t)Buttons::call_red + (uint8_t) Rockers::back;
     }
 
     return 0; //no input was created
+  }
+
+public:
+  InputManager(/* args */);
+  ~InputManager();
+
+  void Startup(){
+    dac.begin(0x60);//default address
+  }
+
+  void SetDAC(){
+    //Serial.println(OutputValue());
+    dacValue = map (OutputValue(),0,INPUT_SUM,0, DAC_MAX);
+    dac.setVoltage(dacValue,false);
+    delay(DEFAULT_DELAY);
+    button = nobutton;
+    rocker = norocker;
+    volumeEncoder = nochange;
     
   }
 
@@ -73,13 +90,35 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
-    button = (Buttons)map(analogIn, 0, 1023, nobutton, voice_cmd);
+    button = nobutton;
+    if (analogIn <= (1023/BUTTON_RESISTORS) && analogIn > 10)
+    {
+      //Serial.println(voice_cmd);
+      button = voice_cmd;
+    }
+    if (analogIn <= ((1023*2)/BUTTON_RESISTORS) && analogIn > (1023/BUTTON_RESISTORS))
+    {
+      //Serial.println(call_red);
+      button = call_red;
+    }
+    if (analogIn <= ((1023*3)/BUTTON_RESISTORS) && analogIn > ((1023*2)/BUTTON_RESISTORS))
+    {
+      //Serial.println(call_green);
+      button == call_green;
+    }
   }
 
   void AnalogRockerDecoder(int analogIn)
   {
-
-    rocker = (Rockers)map(analogIn, 0, 1023, norocker, downmenu);
+    rocker = norocker;
+    if (analogIn > (1023/ROCKER_RESISTORS))
+    {
+      rocker = skip;
+    }
+    if (analogIn <= (1023/BUTTON_RESISTORS) && analogIn > 10)
+    {
+      rocker = back;
+    }
   }
 
   /**
@@ -115,14 +154,12 @@ public:
   }
 };
 
-
 /**
  * function that modify the output for the radio depending on the input given by the button presse
  * INPUT: takes the button enum to map it to an output value for the DAC
  * */
-  //TODO
-  //map(id,none,pause,0,DAC_MAX);
-
+//TODO
+//map(id,none,pause,0,DAC_MAX);
 
 InputManager::InputManager(/* args */)
 {

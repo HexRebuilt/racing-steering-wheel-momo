@@ -56,3 +56,5 @@
 //analog button chain
 #define BUTTON_CHAIN_PIN    A0
 #define ROCKER_CHAIN_PIN    A1
+#define BUTTON_RESISTORS    3   //are 4 in the chain
+#define ROCKER_RESISTORS    2   //2 in the chain

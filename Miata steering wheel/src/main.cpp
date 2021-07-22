@@ -6,7 +6,6 @@
 #include <PinChangeInterrupt.h>
 #include <RotaryEncoderAdvanced.h>
 #include <TinyGPS++.h>
-#include <Adafruit_MCP4725.h>
 
 #include "defines.h"
 #include "apps/HumanInterface/human_interface.h"
@@ -69,9 +68,6 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-
-  SPI.begin();
-  //output pins
  
   
   //set encoderpins as Pin Change Interrupts
@@ -91,6 +87,8 @@ void setup()
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
   pinMode(ROCKER_CHAIN_PIN,INPUT);
+  
+  inputManager.Startup();
 
   delay(100);
   Serial.println("Pin configuration DONE");
@@ -103,6 +101,7 @@ void setup()
   Serial.println("GPS STARTED");
 
   Serial.println("Configuration DONE");
+  Serial.println(1023/BUTTON_RESISTORS);
   delay(DEFAULT_DELAY);
 
 }
@@ -112,7 +111,7 @@ void loop()
   // put your main code here, to run repeatedly:
   inputManager.AnalogButtonDecoder(analogRead(BUTTON_CHAIN_PIN));
   inputManager.AnalogRockerDecoder(analogRead(ROCKER_CHAIN_PIN));
-
+  inputManager.SetDAC();
 
   while (Serial3.available()){
     gps.encode(Serial3.read());
