@@ -9,50 +9,39 @@
 #include <Adafruit_MCP4725.h>
 
 #include "defines.h"
-#include "volume.h"
 #include "apps/HumanInterface/human_interface.h"
 #include "apps/HumanInterface/Lcd8Digit.h"
 #include "apps/HumanInterface/LedBar.h"
 #include "encoder.h"
-#include "buttonDecoder.h"
+#include "inputManager.h"
 
 unsigned short radioOutputStep = 0;
 int rpm = 0;
 
 
-Buttons buttonPressed = none;
-
 Encoder_KY040 volumewheel, ledwheel;
 
-VolumeController volumecontroller;
+InputManager inputManager;
 
 Lcd8Digit lcd8Digit;
 LedBar ledBar;
 
 TinyGPSPlus gps;
 
-/**
- * function that modify the output for the radio depending on the input given by the button presse
- * INPUT: takes the button enum to map it to an output value for the DAC
- * */
-void RadioOutput(Buttons id)
-{
-  //TODO
-  //map(id,none,pause,0,DAC_MAX);
-}
+
 
 //series of interrupt associated functions
 void interruptVolume()
 {
   rpm = volumewheel.Steps();
-  
-  RadioOutput(buttonPressed);
+  inputManager.ChangeVolume(volumewheel.Steps());
+  //RadioOutput(buttonPressed);
   Serial.println("Pause");
 }
 void interruptPause()
 {
-  buttonPressed = pause;
-  RadioOutput(buttonPressed);
+  //buttonPressed = pause;
+  //RadioOutput(buttonPressed);
   Serial.println("Pause");
 }
 void interruptBrightness()
@@ -100,7 +89,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
 
   //radio buttons chain
-  pinMode(BUTTONCHAINPIN,INPUT);
+  pinMode(BUTTON_CHAIN_PIN,INPUT);
+  pinMode(ROCKER_CHAIN_PIN,INPUT);
 
   delay(100);
   Serial.println("Pin configuration DONE");
@@ -120,7 +110,8 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
-  AnalogButtonDecoder(analogRead(BUTTONCHAINPIN));
+  inputManager.AnalogButtonDecoder(analogRead(BUTTON_CHAIN_PIN));
+  inputManager.AnalogRockerDecoder(analogRead(ROCKER_CHAIN_PIN));
 
 
   while (Serial3.available()){

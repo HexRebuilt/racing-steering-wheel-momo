@@ -39,7 +39,7 @@ private:
             }
         }
 
-        for (i = 0; i < text.length(); i++)
+        for (i = 0; i < (int) text.length(); i++)
         {
             const boolean isDot = text.charAt(i + 1) == '.';
             lcd.setChar(0, digit, text.charAt(i), isDot);

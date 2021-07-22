@@ -54,4 +54,5 @@
 #define DAC_MAX 4095
 
 //analog button chain
-#define BUTTONCHAINPIN  A0
+#define BUTTON_CHAIN_PIN    A0
+#define ROCKER_CHAIN_PIN    A1
