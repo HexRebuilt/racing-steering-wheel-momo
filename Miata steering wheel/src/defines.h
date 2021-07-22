@@ -1,15 +1,5 @@
 #define DEFAULT_DELAY 10
 
-
-//list of buttons and pins
-#define ACTIVE_BUTTON       PH6 
-#define SKIP_BUTTON         PH5 
-#define BACK_BUTTON         PH4 
-#define CALL_ON_BUTTON      PH3 
-#define CALL_OFF_BUTTON     PG5 
-#define VOICE_CMD_BUTTON    PE5 
-#define SOURCE_BUTTON       PE4 
-
 //encoders pin
 #define VOL_CLK                 13
 #define VOL_DATA                8
@@ -19,28 +9,6 @@
 #define LCD_MODE_BUTTON         2
 #define BRIGHTNESS_SENSITIVITY  1
 #define VOL_SENSITIVITY         1
-
-//list of RADIO related costants
-#define RADIO_BUTTONS   8 //total # of radio buttons - no encoders clk and data
-#define RADIO_INPUTS    10// all radio inputs
-
-#define NOTHING     0
-#define ACTIVE      1 
-#define SKIP        2 
-#define BACK        3 
-#define CALL_ON     4 
-#define CALL_OFF    5 
-#define VOICE_CMD   6 
-#define SOURCE      7 
-#define PAUSE       8
-#define VOL_UP      9
-#define VOL_DOWN    10 
-
-
-//list of output pins
-#define RADIO_OUT   6 //d6 is where the digital potentiometer will be connected to
-#define MPC4131
-#define NO_OUT      0
 
 //steering wheel outputs
 #define MAX_BRIGHT_LEDS 25 //due to power limitations
@@ -82,3 +50,8 @@
 #define GPSBAUD 9600
 #define GPSTX   14
 #define GPSRX   15
+
+#define DAC_MAX 4095
+
+//analog button chain
+#define BUTTONCHAINPIN  A0

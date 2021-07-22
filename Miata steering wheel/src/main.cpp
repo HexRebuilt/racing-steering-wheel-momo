@@ -6,9 +6,9 @@
 #include <PinChangeInterrupt.h>
 #include <RotaryEncoderAdvanced.h>
 #include <TinyGPS++.h>
+#include <Adafruit_MCP4725.h>
 
 #include "defines.h"
-//#include "ignore_undesired_press.h"
 #include "volume.h"
 #include "apps/HumanInterface/human_interface.h"
 #include "apps/HumanInterface/Lcd8Digit.h"
@@ -16,13 +16,26 @@
 #include "digital_potentiometer.h"
 #include "encoder.h"
 
-unsigned short buttons[RADIO_BUTTONS] = {ACTIVE_BUTTON, SKIP_BUTTON, BACK_BUTTON, CALL_ON_BUTTON, CALL_OFF_BUTTON, VOICE_CMD_BUTTON, PAUSE_BUTTON};
-unsigned short buttonState[RADIO_BUTTONS] = {0};
 unsigned short radioOutputStep = 0;
 int rpm = 0;
 
-//RotaryEncoderAdvanced<float> volumeEncoder (VOL_CLK,VOL_DATA,PAUSE_BUTTON,VOL_SENSITIVITY,-256,+256);
-//RotaryEncoderAdvanced<float> brightnessEncoder(BRIGHTNESS_CLK,BRIGNTNESS_DATA,LCD_MODE_BUTTON,BRIGHTNESS_SENSITIVITY,MIN_BRIGHT_LCD,MAX_BRIGHT_LCD);
+enum Buttons : uint8_t {
+  none,
+  skip,
+  back,
+  active,
+  call_green,
+  call_redd,
+  voice_cmd,
+  vol_up,
+  vol_down,
+  pause,
+  //not sure about including the lcd buttons in them
+  upmenu,
+  downmenu
+};
+
+Buttons buttonPressed = none;
 
 Encoder_KY040 volumewheel, ledwheel;
 
@@ -39,7 +52,6 @@ void interruptVolume()
 }
 void interruptPause()
 {
-  //volumeEncoder.readPushButton();
   Serial.println("Pause");
 }
 void interruptBrightness()
@@ -68,20 +80,9 @@ void setup()
   // put your setup code here, to run once:
   Serial.begin(9600);
 
-  //push-button configuration
-  for (int i = 0; i < RADIO_BUTTONS; i++) //exclude the volume ones
-  {
-    pinMode(buttons[i], INPUT);
-  }
-
   SPI.begin();
   //output pins
-  pinMode(RADIO_OUT, OUTPUT);
-  pinMode(SPI_CLOCK,OUTPUT);
-  pinMode(SPI_DATA, OUTPUT);
  
-  setPotentiometer(RADIO_OUT, NO_OUT);
-  SPISettings(10000000, MSBFIRST, SPI_MODE3);
   
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK, VOL_DATA);
@@ -96,6 +97,9 @@ void setup()
   pinMode(DOWN_PIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
   attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
+
+  //radio buttons chain
+  pinMode(BUTTONCHAINPIN,INPUT);
 
   delay(100);
   Serial.println("Pin configuration DONE");
@@ -119,6 +123,20 @@ void setup()
 void RadioOutput(short step)
 {
   //TODO
+}
+
+/**
+ * It's a function that converts the analogue read to a button identifier
+ * see the electric scheme for them to be easier to understand
+ * INPUT: analog reading value.
+ * */
+void AnalogButtonDecoder(int analogIn){
+  if (analogIn == 0)
+  {
+    buttonPressed = none;
+    return;
+  }
+  buttonPressed = (Buttons) map(analogIn,0,1023,none,downmenu);
 }
 
 /*
@@ -230,6 +248,9 @@ void loop()
 {
   // put your main code here, to run repeatedly:
   //Serial.println("main");
+
+  AnalogButtonDecoder(analogRead(BUTTONCHAINPIN));
+  
 
   lcd8Digit.SetRPMDC(rpm * 10);
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
