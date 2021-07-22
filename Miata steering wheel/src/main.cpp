@@ -13,9 +13,9 @@
 #include "apps/HumanInterface/LedBar.h"
 #include "encoder.h"
 #include "inputManager.h"
+#include "rpmReader.h"
 
 unsigned short radioOutputStep = 0;
-int rpm = 0;
 
 
 Encoder_KY040 volumewheel, ledwheel;
@@ -27,12 +27,11 @@ LedBar ledBar;
 
 TinyGPSPlus gps;
 
-
+RpmReader rpm(RPMDCPIN);
 
 //series of interrupt associated functions
 void interruptVolume()
 {
-  rpm = volumewheel.Steps();
   inputManager.ChangeVolume(volumewheel.Steps());
 }
 void interruptPause()
@@ -61,6 +60,10 @@ void interruptLCDmode()
   Serial.println("LCD mode");
 }
 
+void interruptRPM(){
+  rpm.incrementRpmCount();
+}
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -80,6 +83,8 @@ void setup()
   pinMode(DOWN_PIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
   attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
+  pinMode(RPMDCPIN,INPUT);
+  attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
 
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
@@ -118,10 +123,10 @@ void loop()
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
-  lcd8Digit.SetRPMDC(rpm * 10);
+  lcd8Digit.SetRPMDC(rpm.ReadRPM());
   lcd8Digit.Update();
   
-  ledBar.SetRPMDC(rpm * 10);
+  ledBar.SetRPMDC(rpm.ReadRPM());
   ledBar.Update();  
   
   delay(DEFAULT_DELAY);

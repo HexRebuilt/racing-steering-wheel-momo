@@ -35,7 +35,7 @@
 #define NUM_LEDS            8
 #define LED_TYPE            WS2812B
 #define COLOR_ORDER         GRB
-#define LED_DELAY     5//ms
+#define LED_DELAY           5//ms
 #define GREEN_LED_INDEX     4
 #define YELLOW_LED_INDEX    1
 #define RED_LED_INDEX       0
@@ -44,7 +44,10 @@
 #define RED_RPM_DC          80
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5 
-#define MAXRPM              7200     
+#define MAXRPM              7200
+#define RPMDCPIN            19//D19
+#define CYLINDER_NUMBER     4  
+#define RPM_UPDATE_INTERVAL 50   
 
 //GPS stuff
 #define GPSBAUD 9600
