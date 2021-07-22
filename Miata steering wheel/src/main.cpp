@@ -34,8 +34,6 @@ void interruptVolume()
 {
   rpm = volumewheel.Steps();
   inputManager.ChangeVolume(volumewheel.Steps());
-  //RadioOutput(buttonPressed);
-  Serial.println("Pause");
 }
 void interruptPause()
 {
@@ -99,10 +97,10 @@ void setup()
   //gps configuration
   Serial3.begin(GPSBAUD);
   Serial.println("GPS STARTED");
-
-  Serial.println("Configuration DONE");
-  Serial.println(1023/BUTTON_RESISTORS);
+  
   delay(DEFAULT_DELAY);
+  Serial.println("Configuration DONE");
+  
 
 }
 
@@ -112,7 +110,7 @@ void loop()
   inputManager.AnalogButtonDecoder(analogRead(BUTTON_CHAIN_PIN));
   inputManager.AnalogRockerDecoder(analogRead(ROCKER_CHAIN_PIN));
   inputManager.SetDAC();
-
+  //delay(1000);
   while (Serial3.available()){
     gps.encode(Serial3.read());
   }

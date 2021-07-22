@@ -33,6 +33,7 @@ private:
   Rockers rocker = norocker;
   Encoder volumeEncoder = nochange;
   short volumeCurrentState = 0;
+  uint8_t buttonIndex =0;
 
   unsigned int dacValue = 0;
 
@@ -44,24 +45,28 @@ private:
    * values present
    * OUTPUT: it's a function that return an integer value for the DAC
    * */
-  uint16_t OutputValue()
+  void  OutputValue()
   {
     if (button != nobutton)
     {
-      return button;
+      buttonIndex = button;
+      button = nobutton;
+      return;
     }
 
     if (rocker != norocker)
     {
-      return rocker + (uint8_t)Buttons::call_red;
+      buttonIndex =  rocker + (uint8_t)Buttons::call_green;
+      rocker = norocker;
+      return;
     }
 
     if (volumeEncoder != nochange)
     {
-      return volumeEncoder + (uint8_t)Buttons::call_red + (uint8_t) Rockers::back;
+      buttonIndex = volumeEncoder + (uint8_t)Buttons::call_green + (uint8_t) Rockers::back;
+      volumeEncoder = nochange;
+      return;
     }
-
-    return 0; //no input was created
   }
 
 public:
@@ -70,17 +75,20 @@ public:
 
   void Startup(){
     dac.begin(0x60);//default address
+    //dac.setVoltage(0,true);
   }
 
-  void SetDAC(){
-    //Serial.println(OutputValue());
-    dacValue = map (OutputValue(),0,INPUT_SUM,0, DAC_MAX);
-    dac.setVoltage(dacValue,false);
+  void SetDAC()
+  {
+    OutputValue();
+    dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
+    buttonIndex = 0;
+    if (dacValue != 0)
+    {
+      Serial.println(dacValue);
+    }
+    dac.setVoltage(dacValue, false);
     delay(DEFAULT_DELAY);
-    button = nobutton;
-    rocker = norocker;
-    volumeEncoder = nochange;
-    
   }
 
   /**
@@ -90,27 +98,30 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
-    button = nobutton;
-    if (analogIn <= (1023/BUTTON_RESISTORS) && analogIn > 10)
+    if (analogIn < THRESHOLD)
     {
-      //Serial.println(voice_cmd);
-      button = voice_cmd;
+      button = nobutton;
+      return;
     }
-    if (analogIn <= ((1023*2)/BUTTON_RESISTORS) && analogIn > (1023/BUTTON_RESISTORS))
+    
+    for (uint8_t i = BUTTON_RESISTORS; i > 0; i--)
     {
-      //Serial.println(call_red);
-      button = call_red;
+      if (analogIn > ((1023 *(BUTTON_RESISTORS - i)) / BUTTON_RESISTORS))
+      {
+        button = (Buttons) i;
+      }
     }
-    if (analogIn <= ((1023*3)/BUTTON_RESISTORS) && analogIn > ((1023*2)/BUTTON_RESISTORS))
-    {
-      //Serial.println(call_green);
-      button == call_green;
-    }
+    //Serial.println(button);
   }
 
   void AnalogRockerDecoder(int analogIn)
   {
-    rocker = norocker;
+    if (analogIn < THRESHOLD)
+    {
+      rocker = norocker;
+      return;
+    }
+    
     if (analogIn > (1023/ROCKER_RESISTORS))
     {
       rocker = skip;
@@ -140,18 +151,18 @@ public:
     if (volumeCurrentState < steps) // increase volume
     {
       volumeCurrentState++;
-      Serial.print("Current volume state:");
-      Serial.println(volumeCurrentState);
+      Serial.println("Vol UP");
       volumeEncoder = vol_up;
     }
     else
     {
       volumeCurrentState--;
-      Serial.print("Current volume state:");
-      Serial.println(volumeCurrentState);
+      Serial.println("Vol DOWN");
       volumeEncoder = vol_down;
     }
+    //Serial.println(OutputValue());
   }
+
 };
 
 /**
