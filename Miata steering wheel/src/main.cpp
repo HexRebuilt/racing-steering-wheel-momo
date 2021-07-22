@@ -13,28 +13,12 @@
 #include "apps/HumanInterface/human_interface.h"
 #include "apps/HumanInterface/Lcd8Digit.h"
 #include "apps/HumanInterface/LedBar.h"
-#include "digital_potentiometer.h"
 #include "encoder.h"
+#include "buttonDecoder.h"
 
 unsigned short radioOutputStep = 0;
 int rpm = 0;
 
-enum Buttons : uint8_t {
-  none,
-  skip,
-  back,
-  active,
-  call_green,
-  call_redd,
-  voice_cmd,
-  vol_up,
-  vol_down,
-  upmenu,
-  downmenu,
-  //those ones are linked to digital pin interrupt for the encoders
-  pause,
-  lcdset
-};
 
 Buttons buttonPressed = none;
 
@@ -47,9 +31,23 @@ LedBar ledBar;
 
 TinyGPSPlus gps;
 
+/**
+ * function that modify the output for the radio depending on the input given by the button presse
+ * INPUT: takes the button enum to map it to an output value for the DAC
+ * */
+void RadioOutput(Buttons id)
+{
+  //TODO
+  //map(id,none,pause,0,DAC_MAX);
+}
+
+//series of interrupt associated functions
 void interruptVolume()
 {
   rpm = volumewheel.Steps();
+  
+  RadioOutput(buttonPressed);
+  Serial.println("Pause");
 }
 void interruptPause()
 {
@@ -117,30 +115,6 @@ void setup()
   Serial.println("Configuration DONE");
   delay(DEFAULT_DELAY);
 
-}
-
-/**
- * function that modify the output for the radio depending on the input given by the button presse
- * */
-
-void RadioOutput(Buttons id)
-{
-  //TODO
-  //map(id,none,pause,0,DAC_MAX);
-}
-
-/**
- * It's a function that converts the analogue read to a button identifier
- * see the electric scheme for them to be easier to understand
- * INPUT: analog reading value.
- * */
-void AnalogButtonDecoder(int analogIn){
-  if (analogIn == 0)
-  {
-    buttonPressed = none;
-    return;
-  }
-  buttonPressed = (Buttons) map(analogIn,0,1023,none,downmenu);
 }
 
 void loop()
