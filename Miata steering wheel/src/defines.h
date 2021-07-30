@@ -26,8 +26,8 @@
 #define DIGIT_UPDATE_MS         5
 
 //menu context switch pins
-#define UP_PIN      18
-#define DOWN_PIN    19
+#define UP_PIN      19
+#define DOWN_PIN    18
 
 
 //NeoPixel led bar

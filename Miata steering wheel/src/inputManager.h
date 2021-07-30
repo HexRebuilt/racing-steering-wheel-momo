@@ -6,7 +6,7 @@ private:
   enum Buttons : uint8_t
   {
     nobutton,
-    //active,
+    active,
     voice_cmd,
     call_red,
     call_green
@@ -52,6 +52,7 @@ private:
     {
       buttonIndex = button;
       button = nobutton;
+      Serial.println(button);
       switchtime = millis();
       return;
     }
@@ -60,6 +61,7 @@ private:
     {
       buttonIndex = rocker + (uint8_t)Buttons::call_green;
       rocker = norocker;
+      Serial.println(rocker);
       switchtime = millis();
       return;
     }
@@ -67,6 +69,7 @@ private:
     if (volumeEncoder != nochange)
     {
       buttonIndex = volumeEncoder + (uint8_t)Buttons::call_green + (uint8_t)Rockers::back;
+      Serial.println(volumeEncoder);
       volumeEncoder = nochange;
       switchtime = millis();
       return;
