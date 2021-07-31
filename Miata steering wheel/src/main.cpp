@@ -61,7 +61,7 @@ void interruptLCDmode()
 }
 
 void interruptRPM(){
-  rpm.incrementRpmCount();
+  //rpm.incrementRpmCount();
 }
 
 void setup()
@@ -83,8 +83,8 @@ void setup()
   pinMode(DOWN_PIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
   attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
-  pinMode(RPMDCPIN,INPUT);
-  attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
+  //pinMode(RPMDCPIN,INPUT);
+  //attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
 
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
@@ -123,10 +123,10 @@ void loop()
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
-  lcd8Digit.SetRPMDC(rpm.ReadRPM());
+  lcd8Digit.SetRPMDC(0);
   lcd8Digit.Update();
   
-  ledBar.SetRPMDC(rpm.ReadRPM());
+  ledBar.SetRPMDC(3000);
   ledBar.Update();  
   
   delay(DEFAULT_DELAY);

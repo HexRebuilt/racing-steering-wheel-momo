@@ -20,14 +20,14 @@
 #define MILLISECONDS_PER_MENU 3000
 
 //LCD spi related constants
-#define LCD_DIN                 22
+#define LCD_DIN                 24
 #define LCD_CLK                 23
-#define LCD_CS                  24
+#define LCD_CS                  22
 #define DIGIT_UPDATE_MS         5
 
 //menu context switch pins
-#define UP_PIN      19
-#define DOWN_PIN    18
+#define UP_PIN      18
+#define DOWN_PIN    19
 
 
 //NeoPixel led bar
@@ -45,7 +45,7 @@
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5 
 #define MAXRPM              7200
-#define RPMDCPIN            19//D19
+#define RPMDCPIN            //D19
 #define CYLINDER_NUMBER     4  
 #define RPM_UPDATE_INTERVAL 50   
 
