@@ -1,4 +1,5 @@
-#define DEFAULT_DELAY 10
+#define DEFAULT_DELAY   10
+#define INPUT_DELAY     50 //ms for ignoring repeated input
 
 //encoders pin
 #define VOL_CLK                 13
@@ -57,9 +58,10 @@
 #define DAC_MAX 4095
 
 //analog button chain
-#define BUTTON_CHAIN_PIN    A0
-#define ROCKER_CHAIN_PIN    A1
-#define BUTTON_RESISTORS    3   //are 4 in the chain
-#define ROCKER_RESISTORS    2   //2 in the chain
-#define THRESHOLD           50  //to avoid incorrect reading from bad ground
-#define ANALOG_OUTPUT_TIME  50  //ms
+#define BUTTON_CHAIN_PIN        A0
+#define ROCKER_CHAIN_PIN        A1
+#define BUTTON_RESISTORS        4   //are 3+1 in the chain
+#define ROCKER_RESISTORS        2   //2 in the chain
+#define THRESHOLD               50  //to avoid incorrect reading from bad ground
+#define ANALOG_OUTPUT_TIME      50  //ms
+#define ANALOG_RANGE_VALUE_BUTTONS 50

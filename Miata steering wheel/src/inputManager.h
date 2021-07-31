@@ -6,17 +6,17 @@ private:
   enum Buttons : uint8_t
   {
     nobutton,
-    active,
-    voice_cmd,
+    call_green,
     call_red,
-    call_green
+    voice_cmd,
+    active
   };
 
   enum Rockers : uint8_t
   {
     norocker,
-    skip,
-    back
+    back,
+    skip
   };
 
   enum Encoder : uint8_t
@@ -27,7 +27,7 @@ private:
     pause
   };
 
-#define INPUT_SUM call_red + back + pause
+#define INPUT_SUM active + skip + pause
 
   Buttons button = nobutton;
   Rockers rocker = norocker;
@@ -50,26 +50,29 @@ private:
   {
     if (button != nobutton)
     {
+      Serial.println("Setting DAC BUTTONS");
+      Serial.println(button);
       buttonIndex = button;
       button = nobutton;
-      Serial.println(button);
       switchtime = millis();
       return;
     }
 
     if (rocker != norocker)
     {
-      buttonIndex = rocker + (uint8_t)Buttons::call_green;
-      rocker = norocker;
+      Serial.println("Setting DAC ROCKER");
       Serial.println(rocker);
+      buttonIndex = rocker + (uint8_t)Buttons::active;
+      rocker = norocker;
       switchtime = millis();
       return;
     }
 
     if (volumeEncoder != nochange)
     {
-      buttonIndex = volumeEncoder + (uint8_t)Buttons::call_green + (uint8_t)Rockers::back;
+      Serial.println("Setting DAC VOLUME");
       Serial.println(volumeEncoder);
+      buttonIndex = volumeEncoder + (uint8_t)Buttons::active + (uint8_t)Rockers::skip;
       volumeEncoder = nochange;
       switchtime = millis();
       return;
@@ -113,6 +116,7 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
+    //Serial.println(analogIn);
     if (analogIn < THRESHOLD)
     {
       button = nobutton;
@@ -121,12 +125,18 @@ public:
 
     for (uint8_t i = BUTTON_RESISTORS; i > 0; i--)
     {
+
       if (analogIn > ((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS))
       {
+        //Serial.print(analogIn);
+        //Serial.print(" vs ");
+        //Serial.println(((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS));
+
         button = (Buttons)i;
+        Serial.println(button);
       }
     }
-    //Serial.println(button);
+    
   }
 
   void AnalogRockerDecoder(int analogIn)

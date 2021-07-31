@@ -14,6 +14,7 @@
 #include "encoder.h"
 #include "inputManager.h"
 #include "rpmReader.h"
+#include "timer.h"
 
 unsigned short radioOutputStep = 0;
 
@@ -28,6 +29,9 @@ LedBar ledBar;
 TinyGPSPlus gps;
 
 RpmReader rpm(RPMDCPIN);
+
+Timer upMenuTimer(INPUT_DELAY);
+Timer downMenuTimer(INPUT_DELAY);
 
 //series of interrupt associated functions
 void interruptVolume()
@@ -46,13 +50,21 @@ void interruptBrightness()
 }
 
 void menuUp(){
-  Serial.println("Menu UP");
-  lcd8Digit.UpMenu();
-} 
+    if (upMenuTimer.isNewInput())
+  {
+    Serial.println("Menu UP");
+lcd8Digit.UpMenu();  
+}
+  
+}
 
-void menuDown(){
-  Serial.println("Menu DOWN");
-  lcd8Digit.DownMenu();
+void menuDown()
+{
+  if (downMenuTimer.isNewInput())
+  {
+    Serial.println("Menu DOWN");
+    lcd8Digit.DownMenu();
+  }
 }
 
 void interruptLCDmode()
