@@ -46,7 +46,7 @@
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5 
 #define MAXRPM              7200
-#define RPMDCPIN            //D19
+#define RPMDCPIN            4   //D4
 #define CYLINDER_NUMBER     4  
 #define RPM_UPDATE_INTERVAL 50   
 
@@ -60,7 +60,13 @@
 //analog button chain
 #define BUTTON_CHAIN_PIN        A0
 #define ROCKER_CHAIN_PIN        A1
+#define ECU_CHAIN_PIN           A2
 #define BUTTON_RESISTORS        4   //are 3+1 in the chain
 #define ROCKER_RESISTORS        2   //2 in the chain
+#define ECU_RESISTORS           2
 #define THRESHOLD               50  //to avoid incorrect reading from bad ground
 #define ANALOG_OUTPUT_TIME      50  //ms
+
+//set Time zone though eeprom
+//4kb of memory available
+#define TIME_ZONE_ADDRESS   0

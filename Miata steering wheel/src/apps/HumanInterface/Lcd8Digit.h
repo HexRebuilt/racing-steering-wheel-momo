@@ -10,6 +10,7 @@ private:
     short brightness = 100;
     String brightChange = "", hud = "";
     unsigned long switchtime = 0;
+    short timezone = 0;
 
     enum State : uint8_t
     {
@@ -205,7 +206,7 @@ public:
      * */
     void SetTime(int h, int m, int s)
     {
-        hours = h;
+        hours = h + timezone;
         minutes = m;
         seconds = s;
     }
@@ -286,6 +287,10 @@ public:
     void SetSatellites(int newSat)
     {
         satellites = newSat;
+    }
+
+    void SetTimeZone (short time){
+        timezone = time;
     }
 };
 

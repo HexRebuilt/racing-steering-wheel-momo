@@ -6,6 +6,7 @@
 #include <PinChangeInterrupt.h>
 #include <RotaryEncoderAdvanced.h>
 #include <TinyGPS++.h>
+#include <EEPROM.h>
 
 #include "defines.h"
 #include "apps/HumanInterface/human_interface.h"
@@ -32,6 +33,7 @@ RpmReader rpm(RPMDCPIN);
 
 Timer upMenuTimer(INPUT_DELAY);
 Timer downMenuTimer(INPUT_DELAY);
+short tmz = 0;
 
 //series of interrupt associated functions
 void interruptVolume()
@@ -49,13 +51,13 @@ void interruptBrightness()
   ledBar.SetBrightness(ledwheel.Steps());
 }
 
-void menuUp(){
-    if (upMenuTimer.isNewInput())
+void menuUp()
+{
+  if (upMenuTimer.isNewInput())
   {
     Serial.println("Menu UP");
-lcd8Digit.UpMenu();  
-}
-  
+    lcd8Digit.UpMenu();
+  }
 }
 
 void menuDown()
@@ -67,9 +69,17 @@ void menuDown()
   }
 }
 
-void interruptLCDmode()
+void interruptTimeZone()
 {
-  Serial.println("LCD mode");
+  Serial.println("Setting Timezone mode");
+  tmz++;//change timezone
+  if (tmz > +14)
+  {
+    tmz = -12;
+  }
+  //updating the stored timezone
+  EEPROM.put(TIME_ZONE_ADDRESS,tmz);
+  lcd8Digit.SetTimeZone(tmz);
 }
 
 void interruptRPM(){
@@ -80,6 +90,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
+  
  
   
   //set encoderpins as Pin Change Interrupts
@@ -88,15 +99,15 @@ void setup()
   attachPCINT(digitalPinToPCINT(VOL_CLK), interruptVolume, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON), interruptPause,FALLING);
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK), interruptBrightness, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON), interruptLCDmode, FALLING);
+  attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON),interruptTimeZone, FALLING);
   
   //setting up the other switches as interrupt
   pinMode(UP_PIN, INPUT_PULLUP);
   pinMode(DOWN_PIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
   attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
-  //pinMode(RPMDCPIN,INPUT);
-  //attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
+  pinMode(RPMDCPIN,INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
 
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
@@ -106,13 +117,16 @@ void setup()
 
   delay(100);
   Serial.println("Pin configuration DONE");
-
-  lcd8Digit.Initialize();
-  ledBar.Initialize();
-
+  EEPROM.get(TIME_ZONE_ADDRESS,tmz);//get the current timezone
   //gps configuration
   Serial3.begin(GPSBAUD);
   Serial.println("GPS STARTED");
+
+  lcd8Digit.Initialize();
+  lcd8Digit.SetTimeZone(tmz);
+  ledBar.Initialize();
+  Serial.println("LCD & LED configuration DONE");
+
   
   delay(DEFAULT_DELAY);
   Serial.println("Configuration DONE");
@@ -138,7 +152,7 @@ void loop()
   lcd8Digit.SetRPMDC(0);
   lcd8Digit.Update();
   
-  ledBar.SetRPMDC(3000);
+  ledBar.SetRPMDC(50);
   ledBar.Update();  
   
   delay(DEFAULT_DELAY);
