@@ -21,9 +21,9 @@
 #define MILLISECONDS_PER_MENU 3000
 
 //LCD spi related constants
-#define LCD_DIN                 24
+#define LCD_DIN                 22
 #define LCD_CLK                 23
-#define LCD_CS                  22
+#define LCD_CS                  24
 #define DIGIT_UPDATE_MS         5
 
 //menu context switch pins
@@ -64,4 +64,3 @@
 #define ROCKER_RESISTORS        2   //2 in the chain
 #define THRESHOLD               50  //to avoid incorrect reading from bad ground
 #define ANALOG_OUTPUT_TIME      50  //ms
-#define ANALOG_RANGE_VALUE_BUTTONS 50
