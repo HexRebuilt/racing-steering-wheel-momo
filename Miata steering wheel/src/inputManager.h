@@ -1,5 +1,6 @@
 #include <Adafruit_MCP4725.h>
 
+
 class InputManager
 {
 private:
@@ -27,16 +28,27 @@ private:
     pause
   };
 
+  enum Ecu : uint8_t
+  {
+    noECU,
+    white,
+    yellow
+  };
+
+
 #define INPUT_SUM active + skip + pause
 
   Buttons button = nobutton;
   Rockers rocker = norocker;
+  Ecu ecu = noECU;
   Encoder volumeEncoder = nochange;
   short volumeCurrentState = 0;
   uint8_t buttonIndex = 0;
   unsigned long switchtime = 0;
 
   unsigned int dacValue = 0;
+
+  int oldButtonsAnalogue = 0, oldRockerAnalogue = 0, oldECUAnalogue =0;
 
   Adafruit_MCP4725 dac;
 
@@ -51,7 +63,7 @@ private:
     if (button != nobutton)
     {
       Serial.println("Setting DAC BUTTONS");
-      Serial.println(button);
+      //Serial.println(button);
       buttonIndex = button;
       button = nobutton;
       switchtime = millis();
@@ -61,7 +73,7 @@ private:
     if (rocker != norocker)
     {
       Serial.println("Setting DAC ROCKER");
-      Serial.println(rocker);
+      //Serial.println(rocker);
       buttonIndex = rocker + (uint8_t)Buttons::active;
       rocker = norocker;
       switchtime = millis();
@@ -71,9 +83,19 @@ private:
     if (volumeEncoder != nochange)
     {
       Serial.println("Setting DAC VOLUME");
-      Serial.println(volumeEncoder);
+      //Serial.println(volumeEncoder);
       buttonIndex = volumeEncoder + (uint8_t)Buttons::active + (uint8_t)Rockers::skip;
       volumeEncoder = nochange;
+      switchtime = millis();
+      return;
+    }
+    
+    if (ecu != noECU)
+    {
+      Serial.println("Setting ECU OUTPUT");
+      //Serial.println(ecu);
+      buttonIndex = ecu + (uint8_t)Encoder::pause + (uint8_t)Buttons::active + (uint8_t)Rockers::skip;
+      ecu = noECU;
       switchtime = millis();
       return;
     }
@@ -116,13 +138,16 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
+
     //Serial.println(analogIn);
-    if (analogIn < THRESHOLD)
+    if (analogIn < THRESHOLD || oldButtonsAnalogue == analogIn )
     {
       button = nobutton;
       return;
     }
 
+    oldButtonsAnalogue = analogIn;
+    Serial.println(analogIn);
     for (uint8_t i = BUTTON_RESISTORS; i > 0; i--)
     {
 
@@ -133,21 +158,34 @@ public:
         //Serial.println(((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS));
 
         button = (Buttons)i;
-        Serial.println(button);
+        //Serial.println(button);
       }
     }
-    
+    Serial.println(button);
   }
 
   void AnalogRockerDecoder(int analogIn)
   {
-    if (analogIn < THRESHOLD)
+    if (analogIn < THRESHOLD || oldRockerAnalogue == analogIn )
     {
       rocker = norocker;
       return;
     }
+    Serial.println(analogIn);
+    oldRockerAnalogue = analogIn;
+    rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back :skip;
+  }
 
-    rocker = analogIn > (1023 / ROCKER_RESISTORS) ? skip : back;
+  void AnalogECUDecoder(int analogIn)
+  {
+    if (analogIn < THRESHOLD || oldECUAnalogue == analogIn)
+    {
+      ecu = noECU;
+      return;
+    }
+    Serial.println(analogIn);
+    oldECUAnalogue = analogIn;
+    ecu = analogIn > (1023 / ECU_RESISTORS) ? white : yellow;
   }
 
   /**
