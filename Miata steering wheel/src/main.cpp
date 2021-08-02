@@ -90,7 +90,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  
+  //EEPROM.put(TIME_ZONE_ADDRESS,0);
  
   
   //set encoderpins as Pin Change Interrupts
