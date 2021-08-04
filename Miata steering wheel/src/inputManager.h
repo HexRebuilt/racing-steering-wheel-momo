@@ -1,6 +1,5 @@
 #include <Adafruit_MCP4725.h>
 
-
 class InputManager
 {
 private:
@@ -38,7 +37,6 @@ private:
     downMenu
   };
 
-
 #define INPUT_SUM source + skip + pause
 
   Buttons button = nobutton;
@@ -52,16 +50,9 @@ private:
   unsigned int dacValue = 0;
 
   int oldButtons = nobutton, oldRocker = norocker, oldECU = noECU;
+  bool ecuSkip = false, buttonSkip = false, rockerSkip = false;
 
   Adafruit_MCP4725 dac;
-
-  /**
-   * Functions that is used to mitigate the oscillations on the analogue signals
-   * this should avoid setting the dac multiple times per input
-   * */
-  void ButtonPressIsolation(){
-  
-  }
 
   /**
    * it works sequentially analyzing all the private enums and return the 
@@ -69,7 +60,7 @@ private:
    * values present
    * OUTPUT: it's a function that return an integer value for the DAC
    * */
-  void OutputValue()
+  void DACOutputValue()
   {
     if (button != nobutton)
     {
@@ -107,7 +98,7 @@ private:
   void TimeToResetButtonInput()
   {
     if (switchtime != 0 && (millis() - switchtime) >= ANALOG_OUTPUT_TIME)
-    { 
+    {
       // I need to reset the state of the lcd
       Serial.println("Resetting DAC output");
       buttonIndex = 0;
@@ -128,7 +119,7 @@ public:
   void SetDAC()
   {
 
-    OutputValue();
+    DACOutputValue();
     TimeToResetButtonInput();
     dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
     dac.setVoltage(dacValue, false);
@@ -143,89 +134,129 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
-    if (analogIn < THRESHOLD )
+    oldButtons = button;
+
+    if (analogIn < THRESHOLD)
     {
       button = nobutton;
+      buttonSkip = false;
       return;
     }
 
-    Serial.print("BUTTON ADC: ");
-    Serial.println(analogIn);
-    if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
+    if (!buttonSkip)
     {
-      button = call_green;
-    }
-    
-    if (analogIn >= RADIO_RED_VALUE - RADIO_RANGE && analogIn <= RADIO_RED_VALUE + RADIO_RANGE)
-    {
-      button = call_red;
-    }
-    
-    
-    if (analogIn >= RADIO_BLUE_VALUE - RADIO_RANGE && analogIn <= RADIO_BLUE_VALUE + RADIO_RANGE)
-    {
-      button = voice_cmd;
-    }
+      //Serial.print("BUTTON ADC: ");
+      //Serial.println(analogIn);
+      if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
+      {
+        button = call_green;
+      }
 
-    
-    if (analogIn >= RADIO_BLACK_VALUE - RADIO_RANGE && analogIn < RADIO_BLACK_VALUE + RADIO_RANGE)
-    {
-      button = source;
-    }
+      if (analogIn >= RADIO_RED_VALUE - RADIO_RANGE && analogIn <= RADIO_RED_VALUE + RADIO_RANGE)
+      {
+        button = call_red;
+      }
 
-    Serial.print("BUTTONS Enum value: ");
-    Serial.println(button);
+      if (analogIn >= RADIO_BLUE_VALUE - RADIO_RANGE && analogIn <= RADIO_BLUE_VALUE + RADIO_RANGE)
+      {
+        button = voice_cmd;
+      }
+
+      if (analogIn >= RADIO_BLACK_VALUE - RADIO_RANGE && analogIn < RADIO_BLACK_VALUE + RADIO_RANGE)
+      {
+        button = source;
+      }
+
+      if (oldButtons == button)
+      {
+        Serial.print("Same Value! ");
+        Serial.println(button);
+        buttonSkip = true;
+        return;
+      }      
+      Serial.print("BUTTONS Enum value: ");
+      Serial.println(button);
+    }
   }
 
   void AnalogRockerDecoder(int analogIn)
   {
-    if (analogIn < THRESHOLD )
+    //oldRocker = rocker;
+
+    if (analogIn < THRESHOLD)
     {
       rocker = norocker;
+      rockerSkip = false;
       return;
     }
-    Serial.println(analogIn);
-    rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back :skip;
+
+    if (!rockerSkip)
+    {
+      rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back : skip;
+
+      if (rocker == oldRocker)
+      {
+        Serial.print("Same Value! ");
+        Serial.println(rocker);
+        rockerSkip = true;
+        return;
+      }
+
+      oldRocker = rocker;
+      Serial.print("Rocker Enum value: ");
+      Serial.println(rocker);
+    }
   }
 
   void AnalogECUDecoder(int analogIn)
   {
+    oldECU = ecu;
+
     if (analogIn < THRESHOLD)
     {
       ecu = noECU;
+      ecuSkip = false; //i've reset the input
       return;
     }
 
-    Serial.print("BUTTON ADC: ");
-    Serial.println(analogIn);
-     
-    if (analogIn >= ECU_RED_VALUE - ECU_RANGE && analogIn < ECU_RED_VALUE + ECU_RANGE)
+    if (!ecuSkip) //ignore repeted press
     {
-      ecu = red;
-    }
-    
-    if (analogIn >= ECU_WHITE_VALUE - ECU_RANGE && analogIn < ECU_WHITE_VALUE + ECU_RANGE)
-    {
-      ecu = white;
-    }
+      if (analogIn >= ECU_RED_VALUE - ECU_RANGE && analogIn < ECU_RED_VALUE + ECU_RANGE)
+      {
+        ecu = red;
+      }
 
-    if (analogIn >= ECU_YELLOW_VALUE - ECU_RANGE && analogIn < ECU_YELLOW_VALUE + ECU_RANGE)
-    {
-      ecu = yellow;
-    }
-     
-    if (analogIn >= ECU_MENU_UP_VALUE - ECU_RANGE && analogIn < ECU_MENU_UP_VALUE + ECU_RANGE)
-    {
-      ecu = upMenu;
-    }
+      if (analogIn >= ECU_WHITE_VALUE - ECU_RANGE && analogIn < ECU_WHITE_VALUE + ECU_RANGE)
+      {
+        ecu = white;
+      }
 
-    if (analogIn >= ECU_MENU_DOWN_VALUE - ECU_RANGE && analogIn < ECU_MENU_DOWN_VALUE + ECU_RANGE)
-    {
-      ecu = downMenu;
-    }
-    Serial.print("ECU Enum value: ");
-    Serial.println(ecu);
+      if (analogIn >= ECU_YELLOW_VALUE - ECU_RANGE && analogIn < ECU_YELLOW_VALUE + ECU_RANGE)
+      {
+        ecu = yellow;
+      }
 
+      if (analogIn >= ECU_MENU_UP_VALUE - ECU_RANGE && analogIn < ECU_MENU_UP_VALUE + ECU_RANGE)
+      {
+        ecu = upMenu;
+      }
+
+      if (analogIn >= ECU_MENU_DOWN_VALUE - ECU_RANGE && analogIn < ECU_MENU_DOWN_VALUE + ECU_RANGE)
+      {
+        ecu = downMenu;
+      }
+
+      if (ecu == oldECU)
+      {
+        Serial.print("Same Value! ");
+        Serial.println(ecu);
+        ecuSkip = true;
+        return;
+      }
+
+      Serial.print("ECU Enum value: ");
+      Serial.println(ecu);
+    }
   }
 
   /**
@@ -256,7 +287,7 @@ public:
       Serial.println("Vol DOWN");
       volumeEncoder = vol_down;
     }
-    //Serial.println(OutputValue());
+    //Serial.println(DACOutputValue());
   }
 
   void SetPause()
