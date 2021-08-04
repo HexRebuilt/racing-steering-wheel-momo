@@ -46,7 +46,7 @@
 #define RED_RPM_DC          80
 #define SHIFTLIGHT_RPM_DC   80
 #define MINRPM              5 
-#define MAXRPM              7200
+#define MAXRPM              8000
 #define RPMDCPIN            19   //D19
 #define CYLINDER_NUMBER     4  
 #define RPM_UPDATE_INTERVAL 50   
@@ -88,3 +88,7 @@
 //set Time zone though eeprom
 //4kb of memory available
 #define TIME_ZONE_ADDRESS   0
+
+//advanced functions
+#define KMPH_PER_VOLUME_CHANGE  10
+#define VOLUME_STEPS            2

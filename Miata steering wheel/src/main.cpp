@@ -35,7 +35,7 @@ Timer upMenuTimer(INPUT_DELAY);
 Timer downMenuTimer(INPUT_DELAY);
 short tmz = 0;
 
-unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0;
+unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0, speed = 0, rpmDC = 0;
 
 //series of interrupt associated functions
 void interruptVolume()
@@ -54,7 +54,7 @@ void interruptBrightness()
 }
 
 void interruptRPM(){
-  //rpm.incrementRpmCount();
+  rpm.incrementRpmCount();
 }
 
 void setup()
@@ -104,12 +104,18 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
+  //getting the main variables
   buttonADC = analogRead(BUTTON_CHAIN_PIN);
   rockerADC = analogRead(ROCKER_CHAIN_PIN);
   ecuADC = analogRead (ECU_CHAIN_PIN);
+  speed = gps.speed.kmph();
+  rpmDC = 10; //rpm.ReadRPM();
+
+
   inputManager.AnalogButtonDecoder(buttonADC);
   inputManager.AnalogRockerDecoder(rockerADC);
   inputManager.AnalogECUDecoder(ecuADC);
+  inputManager.SetSpeed(speed);
 
   inputManager.OutputECU();
   
@@ -131,11 +137,11 @@ void loop()
   
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
-  lcd8Digit.SetSpeed((int)gps.speed.kmph());
-  lcd8Digit.SetRPMDC(0);
+  lcd8Digit.SetSpeed((int) speed);
+  lcd8Digit.SetRPMDC(rpmDC);
   lcd8Digit.Update();
   
-  ledBar.SetRPMDC(50);
+  ledBar.SetRPMDC(rpmDC);
   ledBar.Update();  
   
   delay(DEFAULT_DELAY);

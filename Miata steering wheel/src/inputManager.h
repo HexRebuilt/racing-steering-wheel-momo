@@ -48,6 +48,8 @@ private:
   unsigned long switchtime = 0;
 
   unsigned int dacValue = 0;
+  int speed = 0, lastSpeedVolumeChange = 0;
+  bool volumeChange = false;
 
   bool menuForward = false, menuBackward = false; 
   bool ecuSkip = false, buttonSkip = false, rockerSkip = false;
@@ -112,6 +114,35 @@ public:
   {
     dac.begin(0x60); //default address
     //dac.setVoltage(0,true);
+  }
+
+  /**
+   * Function that updates the speed and relative to it changes the volume for the Radio
+   * */
+  void SetSpeed(int newSpeed)
+  {
+    speed = newSpeed;
+
+    if (speed > 60)
+    {
+      if (speed > lastSpeedVolumeChange + KMPH_PER_VOLUME_CHANGE)
+      {
+        ChangeVolume(VOLUME_STEPS);
+        volumeChange = true;
+      }
+
+      if (speed < lastSpeedVolumeChange - KMPH_PER_VOLUME_CHANGE)
+      {
+        ChangeVolume(-VOLUME_STEPS);
+        volumeChange = true;
+      }
+      if (volumeChange)
+      {
+        volumeChange = false;
+        lastSpeedVolumeChange = speed;
+        SetDAC();
+      }
+    }
   }
 
   void SetDAC()
