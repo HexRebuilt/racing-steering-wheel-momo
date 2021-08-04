@@ -49,7 +49,7 @@ private:
 
   unsigned int dacValue = 0;
 
-  int oldButtons = nobutton, oldRocker = norocker, oldECU = noECU;
+  bool menuForward = false, menuBackward = false; 
   bool ecuSkip = false, buttonSkip = false, rockerSkip = false;
 
   Adafruit_MCP4725 dac;
@@ -67,7 +67,6 @@ private:
       Serial.println("Setting DAC BUTTONS");
       //Serial.println(button);
       buttonIndex = button;
-      oldButtons = button;
       button = nobutton;
       switchtime = millis();
       return;
@@ -78,7 +77,6 @@ private:
       Serial.println("Setting DAC ROCKER");
       //Serial.println(rocker);
       buttonIndex = rocker + (uint8_t)Buttons::source;
-      oldRocker = rocker;
       rocker = norocker;
       switchtime = millis();
       return;
@@ -280,6 +278,50 @@ public:
   {
     volumeEncoder = pause;
   }
+
+  void OutputECU(){
+    switch (ecu)
+    {
+    case red:
+      /* code */
+      break;
+    case white:
+      /* code */
+      break;
+    case yellow:
+      /* code */
+      break;
+    case upMenu:
+      menuForward = true;
+      break;
+    case downMenu:
+      menuBackward = true;
+      break;
+    default:
+      break;
+    }
+    //reset the ecu enum variable after elaboration
+    ecu = noECU;
+  }
+
+  bool isMenuUp(){
+    if (menuForward)
+    {
+      menuForward = false;
+      return true;
+    }
+    return false;
+  }
+  
+  bool IsMenuDown(){
+    if (menuBackward)
+    {
+      menuBackward = false;
+      return true;
+    }
+    return false;
+  }
+
 };
 
 InputManager::InputManager(/* args */)

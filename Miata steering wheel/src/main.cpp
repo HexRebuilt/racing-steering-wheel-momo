@@ -142,14 +142,26 @@ void loop()
   inputManager.AnalogButtonDecoder(buttonADC);
   inputManager.AnalogRockerDecoder(rockerADC);
   inputManager.AnalogECUDecoder(ecuADC);
+
+  inputManager.OutputECU();
   
   inputManager.SetDAC();
-  //delay(1000);
+  
   while (Serial3.available()){
     gps.encode(Serial3.read());
   }
   
   //updating the output devices
+  if (inputManager.isMenuUp())
+  {
+    lcd8Digit.UpMenu();
+  }
+  if (inputManager.IsMenuDown())
+  {
+    lcd8Digit.DownMenu();
+  }
+  
+  
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
   lcd8Digit.SetSpeed((int)gps.speed.kmph());
