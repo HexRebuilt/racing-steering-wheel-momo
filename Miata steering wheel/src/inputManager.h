@@ -56,6 +56,14 @@ private:
   Adafruit_MCP4725 dac;
 
   /**
+   * Functions that is used to mitigate the oscillations on the analogue signals
+   * this should avoid setting the dac multiple times per input
+   * */
+  void ButtonPressIsolation(){
+  
+  }
+
+  /**
    * it works sequentially analyzing all the private enums and return the 
    * first that's different from 0. it offsets the value taking into account the different
    * values present
@@ -68,6 +76,7 @@ private:
       Serial.println("Setting DAC BUTTONS");
       //Serial.println(button);
       buttonIndex = button;
+      oldButtons = button;
       button = nobutton;
       switchtime = millis();
       return;
@@ -78,6 +87,7 @@ private:
       Serial.println("Setting DAC ROCKER");
       //Serial.println(rocker);
       buttonIndex = rocker + (uint8_t)Buttons::source;
+      oldRocker = rocker;
       rocker = norocker;
       switchtime = millis();
       return;
@@ -89,16 +99,6 @@ private:
       //Serial.println(volumeEncoder);
       buttonIndex = volumeEncoder + (uint8_t)Buttons::source + (uint8_t)Rockers::skip;
       volumeEncoder = nochange;
-      switchtime = millis();
-      return;
-    }
-    
-    if (ecu != noECU)
-    {
-      Serial.println("Setting ECU OUTPUT");
-      //Serial.println(ecu);
-      buttonIndex = ecu + (uint8_t)Encoder::pause + (uint8_t)Buttons::source + (uint8_t)Rockers::skip;
-      ecu = noECU;
       switchtime = millis();
       return;
     }
@@ -127,10 +127,12 @@ public:
 
   void SetDAC()
   {
+
     OutputValue();
     TimeToResetButtonInput();
     dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
     dac.setVoltage(dacValue, false);
+
     delay(DEFAULT_DELAY);
   }
 
@@ -141,16 +143,12 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
-
-    //Serial.println(analogIn);
-    //ignore incorrect readings
-    if (analogIn < THRESHOLD || oldButtonsAnalogue == analogIn )
+    if (analogIn < THRESHOLD )
     {
       button = nobutton;
       return;
     }
 
-    oldButtonsAnalogue = analogIn;
     Serial.print("BUTTON ADC: ");
     Serial.println(analogIn);
     if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
@@ -181,13 +179,12 @@ public:
 
   void AnalogRockerDecoder(int analogIn)
   {
-    if (analogIn < THRESHOLD || oldRockerAnalogue == analogIn )
+    if (analogIn < THRESHOLD )
     {
       rocker = norocker;
       return;
     }
     Serial.println(analogIn);
-    oldRockerAnalogue = analogIn;
     rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back :skip;
   }
 
@@ -226,8 +223,6 @@ public:
     {
       ecu = downMenu;
     }
-
-    oldECU = ecu; 
     Serial.print("ECU Enum value: ");
     Serial.println(ecu);
 
