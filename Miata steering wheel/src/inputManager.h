@@ -10,7 +10,7 @@ private:
     call_green,
     call_red,
     voice_cmd,
-    active
+    source
   };
 
   enum Rockers : uint8_t
@@ -31,12 +31,15 @@ private:
   enum Ecu : uint8_t
   {
     noECU,
+    red,
     white,
-    yellow
+    yellow,
+    upMenu,
+    downMenu
   };
 
 
-#define INPUT_SUM active + skip + pause
+#define INPUT_SUM source + skip + pause
 
   Buttons button = nobutton;
   Rockers rocker = norocker;
@@ -48,7 +51,7 @@ private:
 
   unsigned int dacValue = 0;
 
-  int oldButtonsAnalogue = 0, oldRockerAnalogue = 0, oldECUAnalogue =0;
+  int oldButtons = nobutton, oldRocker = norocker, oldECU = noECU;
 
   Adafruit_MCP4725 dac;
 
@@ -74,7 +77,7 @@ private:
     {
       Serial.println("Setting DAC ROCKER");
       //Serial.println(rocker);
-      buttonIndex = rocker + (uint8_t)Buttons::active;
+      buttonIndex = rocker + (uint8_t)Buttons::source;
       rocker = norocker;
       switchtime = millis();
       return;
@@ -84,7 +87,7 @@ private:
     {
       Serial.println("Setting DAC VOLUME");
       //Serial.println(volumeEncoder);
-      buttonIndex = volumeEncoder + (uint8_t)Buttons::active + (uint8_t)Rockers::skip;
+      buttonIndex = volumeEncoder + (uint8_t)Buttons::source + (uint8_t)Rockers::skip;
       volumeEncoder = nochange;
       switchtime = millis();
       return;
@@ -94,7 +97,7 @@ private:
     {
       Serial.println("Setting ECU OUTPUT");
       //Serial.println(ecu);
-      buttonIndex = ecu + (uint8_t)Encoder::pause + (uint8_t)Buttons::active + (uint8_t)Rockers::skip;
+      buttonIndex = ecu + (uint8_t)Encoder::pause + (uint8_t)Buttons::source + (uint8_t)Rockers::skip;
       ecu = noECU;
       switchtime = millis();
       return;
@@ -140,6 +143,7 @@ public:
   {
 
     //Serial.println(analogIn);
+    //ignore incorrect readings
     if (analogIn < THRESHOLD || oldButtonsAnalogue == analogIn )
     {
       button = nobutton;
@@ -147,20 +151,31 @@ public:
     }
 
     oldButtonsAnalogue = analogIn;
+    Serial.print("BUTTON ADC: ");
     Serial.println(analogIn);
-    for (uint8_t i = BUTTON_RESISTORS; i > 0; i--)
+    if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
     {
-
-      if (analogIn > ((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS))
-      {
-        //Serial.print(analogIn);
-        //Serial.print(" vs ");
-        //Serial.println(((1023 * (BUTTON_RESISTORS - i)) / BUTTON_RESISTORS));
-
-        button = (Buttons)i;
-        //Serial.println(button);
-      }
+      button = call_green;
     }
+    
+    if (analogIn >= RADIO_RED_VALUE - RADIO_RANGE && analogIn <= RADIO_RED_VALUE + RADIO_RANGE)
+    {
+      button = call_red;
+    }
+    
+    
+    if (analogIn >= RADIO_BLUE_VALUE - RADIO_RANGE && analogIn <= RADIO_BLUE_VALUE + RADIO_RANGE)
+    {
+      button = voice_cmd;
+    }
+
+    
+    if (analogIn >= RADIO_BLACK_VALUE - RADIO_RANGE && analogIn < RADIO_BLACK_VALUE + RADIO_RANGE)
+    {
+      button = source;
+    }
+
+    Serial.print("BUTTONS Enum value: ");
     Serial.println(button);
   }
 
@@ -178,14 +193,44 @@ public:
 
   void AnalogECUDecoder(int analogIn)
   {
-    if (analogIn < THRESHOLD || oldECUAnalogue == analogIn)
+    if (analogIn < THRESHOLD)
     {
       ecu = noECU;
       return;
     }
+
+    Serial.print("BUTTON ADC: ");
     Serial.println(analogIn);
-    oldECUAnalogue = analogIn;
-    ecu = analogIn > (1023 / ECU_RESISTORS) ? white : yellow;
+     
+    if (analogIn >= ECU_RED_VALUE - ECU_RANGE && analogIn < ECU_RED_VALUE + ECU_RANGE)
+    {
+      ecu = red;
+    }
+    
+    if (analogIn >= ECU_WHITE_VALUE - ECU_RANGE && analogIn < ECU_WHITE_VALUE + ECU_RANGE)
+    {
+      ecu = white;
+    }
+
+    if (analogIn >= ECU_YELLOW_VALUE - ECU_RANGE && analogIn < ECU_YELLOW_VALUE + ECU_RANGE)
+    {
+      ecu = yellow;
+    }
+     
+    if (analogIn >= ECU_MENU_UP_VALUE - ECU_RANGE && analogIn < ECU_MENU_UP_VALUE + ECU_RANGE)
+    {
+      ecu = upMenu;
+    }
+
+    if (analogIn >= ECU_MENU_DOWN_VALUE - ECU_RANGE && analogIn < ECU_MENU_DOWN_VALUE + ECU_RANGE)
+    {
+      ecu = downMenu;
+    }
+
+    oldECU = ecu; 
+    Serial.print("ECU Enum value: ");
+    Serial.println(ecu);
+
   }
 
   /**

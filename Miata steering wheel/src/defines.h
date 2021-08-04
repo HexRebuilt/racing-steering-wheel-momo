@@ -26,10 +26,11 @@
 #define LCD_CS                  24
 #define DIGIT_UPDATE_MS         5
 
+/*
 //menu context switch pins
 #define UP_PIN      18
 #define DOWN_PIN    19
-
+*/
 
 //NeoPixel led bar
 #define LED_PIN             7
@@ -63,9 +64,26 @@
 #define ECU_CHAIN_PIN           A2
 #define BUTTON_RESISTORS        4   //are 3+1 in the chain
 #define ROCKER_RESISTORS        2   //2 in the chain
-#define ECU_RESISTORS           2
+#define ECU_RESISTORS           6   //it includes also the rocker
 #define THRESHOLD               50  //to avoid incorrect reading from bad ground
 #define ANALOG_OUTPUT_TIME      50  //ms
+//value range for analog reading
+//ECU: launch 506/508, yellow 340/342, white 251/253, menu up 176/178, menu down 152/154
+//radio: reply 860/863, close call 650/655, voice comand 427/438, source 175/176
+#define ECU_RED_VALUE           500 //launch button
+#define ECU_YELLOW_VALUE        340
+#define ECU_WHITE_VALUE         250
+#define ECU_MENU_UP_VALUE       175
+#define ECU_MENU_DOWN_VALUE     150
+#define ECU_RANGE               10
+
+#define RADIO_GREEN_VALUE   860    
+#define RADIO_RED_VALUE     650
+#define RADIO_BLUE_VALUE    430
+#define RADIO_BLACK_VALUE   170
+#define RADIO_RANGE         10
+
+
 
 //set Time zone though eeprom
 //4kb of memory available

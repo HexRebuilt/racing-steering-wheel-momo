@@ -35,6 +35,8 @@ Timer upMenuTimer(INPUT_DELAY);
 Timer downMenuTimer(INPUT_DELAY);
 short tmz = 0;
 
+unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0;
+
 //series of interrupt associated functions
 void interruptVolume()
 {
@@ -101,18 +103,15 @@ void setup()
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK), interruptBrightness, CHANGE);
   attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON),interruptTimeZone, FALLING);
   
-  //setting up the other switches as interrupt
-  pinMode(UP_PIN, INPUT_PULLUP);
-  pinMode(DOWN_PIN,INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(UP_PIN),menuUp,FALLING);
-  attachInterrupt(digitalPinToInterrupt(DOWN_PIN),menuDown,FALLING);
+  //setting up the rpm pin
   pinMode(RPMDCPIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
 
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
   pinMode(ROCKER_CHAIN_PIN,INPUT);
-  
+  pinMode(ECU_CHAIN_PIN,INPUT);
+
   inputManager.Startup();
 
   delay(100);
@@ -137,8 +136,13 @@ void setup()
 void loop()
 {
   // put your main code here, to run repeatedly:
-  inputManager.AnalogButtonDecoder(analogRead(BUTTON_CHAIN_PIN));
-  inputManager.AnalogRockerDecoder(analogRead(ROCKER_CHAIN_PIN));
+  buttonADC = analogRead(BUTTON_CHAIN_PIN);
+  rockerADC = analogRead(ROCKER_CHAIN_PIN);
+  ecuADC = analogRead (ECU_CHAIN_PIN);
+  inputManager.AnalogButtonDecoder(buttonADC);
+  inputManager.AnalogRockerDecoder(rockerADC);
+  inputManager.AnalogECUDecoder(ecuADC);
+  
   inputManager.SetDAC();
   //delay(1000);
   while (Serial3.available()){
