@@ -53,37 +53,6 @@ void interruptBrightness()
   ledBar.SetBrightness(ledwheel.Steps());
 }
 
-void menuUp()
-{
-  if (upMenuTimer.isNewInput())
-  {
-    Serial.println("Menu UP");
-    lcd8Digit.UpMenu();
-  }
-}
-
-void menuDown()
-{
-  if (downMenuTimer.isNewInput())
-  {
-    Serial.println("Menu DOWN");
-    lcd8Digit.DownMenu();
-  }
-}
-
-void interruptTimeZone()
-{
-  Serial.println("Setting Timezone mode");
-  tmz++;//change timezone
-  if (tmz > +14)
-  {
-    tmz = -12;
-  }
-  //updating the stored timezone
-  EEPROM.put(TIME_ZONE_ADDRESS,tmz);
-  lcd8Digit.SetTimeZone(tmz);
-}
-
 void interruptRPM(){
   //rpm.incrementRpmCount();
 }
@@ -92,7 +61,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //EEPROM.put(TIME_ZONE_ADDRESS,0);
+  //EEPROM.put(TIME_ZONE_ADDRESS,1);
  
   
   //set encoderpins as Pin Change Interrupts
@@ -101,7 +70,6 @@ void setup()
   attachPCINT(digitalPinToPCINT(VOL_CLK), interruptVolume, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON), interruptPause,FALLING);
   attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK), interruptBrightness, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(LCD_MODE_BUTTON),interruptTimeZone, FALLING);
   
   //setting up the rpm pin
   pinMode(RPMDCPIN,INPUT_PULLUP);
@@ -160,7 +128,6 @@ void loop()
   {
     lcd8Digit.DownMenu();
   }
-  
   
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
