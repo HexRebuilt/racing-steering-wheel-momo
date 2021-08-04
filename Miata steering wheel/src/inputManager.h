@@ -134,8 +134,7 @@ public:
  * */
   void AnalogButtonDecoder(int analogIn)
   {
-    oldButtons = button;
-
+ 
     if (analogIn < THRESHOLD)
     {
       button = nobutton;
@@ -145,8 +144,7 @@ public:
 
     if (!buttonSkip)
     {
-      //Serial.print("BUTTON ADC: ");
-      //Serial.println(analogIn);
+      
       if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
       {
         button = call_green;
@@ -167,22 +165,18 @@ public:
         button = source;
       }
 
-      if (oldButtons == button)
+      if (button != 0)
       {
-        Serial.print("Same Value! ");
+        Serial.print("BUTTONS Enum value: ");
         Serial.println(button);
         buttonSkip = true;
         return;
-      }      
-      Serial.print("BUTTONS Enum value: ");
-      Serial.println(button);
+      }
     }
   }
 
   void AnalogRockerDecoder(int analogIn)
   {
-    //oldRocker = rocker;
-
     if (analogIn < THRESHOLD)
     {
       rocker = norocker;
@@ -194,24 +188,19 @@ public:
     {
       rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back : skip;
 
-      if (rocker == oldRocker)
+      if (rocker != 0)
       {
-        Serial.print("Same Value! ");
+
+        Serial.print("Rocker Enum value: ");
         Serial.println(rocker);
         rockerSkip = true;
         return;
       }
-
-      oldRocker = rocker;
-      Serial.print("Rocker Enum value: ");
-      Serial.println(rocker);
     }
   }
 
   void AnalogECUDecoder(int analogIn)
   {
-    oldECU = ecu;
-
     if (analogIn < THRESHOLD)
     {
       ecu = noECU;
@@ -246,16 +235,13 @@ public:
         ecu = downMenu;
       }
 
-      if (ecu == oldECU)
+      if (ecu != 0)
       {
-        Serial.print("Same Value! ");
+        Serial.print("ECU Enum value: ");
         Serial.println(ecu);
         ecuSkip = true;
         return;
       }
-
-      Serial.print("ECU Enum value: ");
-      Serial.println(ecu);
     }
   }
 
