@@ -12,7 +12,7 @@
 12	LCD ROTARY DATA 	        D9
 13	VOL ROTARY CLK              D13
 14	VOL ROTARY DATA             D8
-15	VOL ROTARY SW               D12
+15	VOL ROTARY SW               D3
 16	LCD ROTARY CLK              D11
 17	dead
 18	ROCKER RADIO                A1

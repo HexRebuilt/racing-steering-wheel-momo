@@ -61,7 +61,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //EEPROM.put(TIME_ZONE_ADDRESS,1);
+  //EEPROM.put(TIME_ZONE_ADDRESS,2);
  
   
   //set encoderpins as Pin Change Interrupts
@@ -109,7 +109,7 @@ void loop()
   rockerADC = analogRead(ROCKER_CHAIN_PIN);
   ecuADC = analogRead (ECU_CHAIN_PIN);
   speed = gps.speed.kmph();
-  rpmDC = 10; //rpm.ReadRPM();
+  rpmDC = 0; //rpm.ReadRPM();
 
 
   inputManager.AnalogButtonDecoder(buttonADC);
