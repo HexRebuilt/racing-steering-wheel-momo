@@ -173,7 +173,8 @@ public:
 
     if (!buttonSkip)
     {
-      
+      Serial.print("Analogue in: ");
+      Serial.println(analogIn);
       if (analogIn >= RADIO_GREEN_VALUE - RADIO_RANGE && analogIn <= RADIO_GREEN_VALUE + RADIO_RANGE)
       {
         button = call_green;
