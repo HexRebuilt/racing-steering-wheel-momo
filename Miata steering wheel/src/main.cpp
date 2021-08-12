@@ -62,7 +62,7 @@ void setup()
   // put your setup code here, to run once:
   Serial.begin(9600);
   //set timezone
-  EEPROM.put(TIME_ZONE_ADDRESS,2);
+  //EEPROM.put(TIME_ZONE_ADDRESS,2);
  
   
   //set encoderpins as Pin Change Interrupts
