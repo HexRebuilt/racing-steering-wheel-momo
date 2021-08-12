@@ -112,8 +112,11 @@ public:
 
   void Startup()
   {
+    Serial.println("DAC initialization");
     dac.begin(0x60); //default address
-    //dac.setVoltage(0,true);
+    dac.setVoltage(0,true); //default value when turned on
+    Serial.println("DAC configuration DONE");
+    
   }
 
   /**
@@ -151,6 +154,11 @@ public:
     DACOutputValue();
     TimeToResetButtonInput();
     dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
+    if (dacValue != 0)
+    {
+      Serial.print("DAC Value: ");
+      Serial.println(dacValue);
+    }
     dac.setVoltage(dacValue, false);
 
     delay(DEFAULT_DELAY);
