@@ -61,7 +61,8 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //EEPROM.put(TIME_ZONE_ADDRESS,2);
+  //set timezone
+  EEPROM.put(TIME_ZONE_ADDRESS,2);
  
   
   //set encoderpins as Pin Change Interrupts
@@ -74,11 +75,11 @@ void setup()
   //setting up the rpm pin
   pinMode(RPMDCPIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
-
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
   pinMode(ROCKER_CHAIN_PIN,INPUT);
   pinMode(ECU_CHAIN_PIN,INPUT);
+  Serial.println("Pin configuration DONE");
 
   inputManager.Startup();
 
