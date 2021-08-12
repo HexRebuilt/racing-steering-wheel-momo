@@ -66,11 +66,11 @@
 #define ROCKER_RESISTORS        2   //2 in the chain
 #define ECU_RESISTORS           6   //it includes also the rocker
 #define THRESHOLD               50  //to avoid incorrect reading from bad ground
-#define ANALOG_OUTPUT_TIME      100  //ms
+#define ANALOG_OUTPUT_TIME      2500  //ms
 //value range for analog reading
 //ECU: launch 506/508, yellow 340/342, white 251/253, menu up 176/178, menu down 152/154
 //radio: reply 860/863, close call 650/655, voice comand 427/438, source 175/176
-#define ECU_RED_VALUE           500 //launch button
+#define ECU_RED_VALUE           510 //launch button
 #define ECU_YELLOW_VALUE        340
 #define ECU_WHITE_VALUE         250
 #define ECU_MENU_UP_VALUE       175
@@ -79,7 +79,7 @@
 
 #define RADIO_GREEN_VALUE   860    
 #define RADIO_RED_VALUE     650
-#define RADIO_BLUE_VALUE    430
+#define RADIO_BLUE_VALUE    440
 #define RADIO_BLACK_VALUE   170
 #define RADIO_RANGE         10
 
