@@ -224,7 +224,9 @@ public:
 
     if (!rockerSkip)
     {
-      rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back : skip;
+      rocker = analogIn > (700) ? back : skip;
+
+      //rocker = analogIn > (1023 / ROCKER_RESISTORS) ? back : skip;
 
       if (rocker != 0)
       {
