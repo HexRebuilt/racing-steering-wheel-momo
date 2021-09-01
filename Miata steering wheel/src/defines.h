@@ -77,11 +77,11 @@
 #define ECU_MENU_DOWN_VALUE     150
 #define ECU_RANGE               10
 
-#define RADIO_GREEN_VALUE   880    
-#define RADIO_RED_VALUE     670
-#define RADIO_BLUE_VALUE    450
-#define RADIO_BLACK_VALUE   180
-#define RADIO_RANGE         10
+#define RADIO_GREEN_VALUE   860    
+#define RADIO_RED_VALUE     650
+#define RADIO_BLUE_VALUE    440
+#define RADIO_BLACK_VALUE   170
+#define RADIO_RANGE         15
 
 
 
