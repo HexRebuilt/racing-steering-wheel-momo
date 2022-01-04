@@ -17,12 +17,15 @@
 #include "rpmReader.h"
 #include "timer.h"
 
+
 unsigned short radioOutputStep = 0;
 
 
 Encoder_KY040 volumewheel, ledwheel;
 
 InputManager inputManager;
+
+MPC4131 radioOut;
 
 Lcd8Digit lcd8Digit;
 LedBar ledBar;
@@ -98,6 +101,9 @@ void setup()
   
   delay(DEFAULT_DELAY);
   Serial.println("Configuration DONE");
+
+
+  
   
 
 }
@@ -120,7 +126,7 @@ void loop()
 
   inputManager.OutputECU();
   
-  inputManager.SetDAC();
+  inputManager.SetPot();
   
   while (Serial3.available()){
     gps.encode(Serial3.read());

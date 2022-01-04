@@ -26,6 +26,11 @@
 #define LCD_CS                  24
 #define DIGIT_UPDATE_MS         5
 
+//radio potentiometer
+#define RADIO_MPC4131_CS        42
+#define RADIO_MPC4131_ADDRESS   0x00
+#define POT_MAX                 127
+
 /*
 //menu context switch pins
 #define UP_PIN      18

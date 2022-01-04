@@ -1,4 +1,5 @@
 #include <Adafruit_MCP4725.h>
+#include "mpc4131.h"
 
 class InputManager
 {
@@ -47,26 +48,27 @@ private:
   uint8_t buttonIndex = 0;
   unsigned long switchtime = 0;
 
-  unsigned int dacValue = 0;
+  unsigned int potValue = 0;
   int speed = 0, lastSpeedVolumeChange = 0;
   bool volumeChange = false;
 
   bool menuForward = false, menuBackward = false; 
   bool ecuSkip = false, buttonSkip = false, rockerSkip = false;
-
-  Adafruit_MCP4725 dac;
+  
+  MPC4131 radioOut;
+  Adafruit_MCP4725 pot;
 
   /**
    * it works sequentially analyzing all the private enums and return the 
    * first that's different from 0. it offsets the value taking into account the different
    * values present
-   * OUTPUT: it's a function that return an integer value for the DAC
+   * OUTPUT: it's a function that return an integer value for the pot
    * */
-  void DACOutputValue()
+  void POTOutputValue()
   {
     if (button != nobutton)
     {
-      Serial.println("Setting DAC BUTTONS");
+      Serial.println("Setting pot BUTTONS");
       //Serial.println(button);
       buttonIndex = button;
       button = nobutton;
@@ -76,7 +78,7 @@ private:
 
     if (rocker != norocker)
     {
-      Serial.println("Setting DAC ROCKER");
+      Serial.println("Setting pot ROCKER");
       //Serial.println(rocker);
       buttonIndex = rocker + (uint8_t)Buttons::source;
       rocker = norocker;
@@ -86,7 +88,7 @@ private:
 
     if (volumeEncoder != nochange)
     {
-      Serial.println("Setting DAC VOLUME");
+      Serial.println("Setting pot VOLUME");
       //Serial.println(volumeEncoder);
       buttonIndex = volumeEncoder + (uint8_t)Buttons::source + (uint8_t)Rockers::skip;
       volumeEncoder = nochange;
@@ -100,7 +102,7 @@ private:
     if (switchtime != 0 && (millis() - switchtime) >= ANALOG_OUTPUT_TIME)
     {
       // I need to reset the state of the lcd
-      Serial.println("Resetting DAC output");
+      Serial.println("Resetting pot output");
       buttonIndex = 0;
       switchtime = 0;
     }
@@ -112,10 +114,10 @@ public:
 
   void Startup()
   {
-    Serial.println("DAC initialization");
-    dac.begin(0x60); //default address
-    dac.setVoltage(0,true); //default value when turned on
-    Serial.println("DAC configuration DONE");
+    Serial.println("POT initialization");
+    //configuring the MPC4131
+    radioOut.Startup();
+    Serial.println("POT configuration DONE");
     
   }
 
@@ -143,23 +145,23 @@ public:
       {
         volumeChange = false;
         lastSpeedVolumeChange = speed;
-        SetDAC();
+        SetPot();
       }
     }
   }
 
-  void SetDAC()
+  void SetPot()
   {
 
-    DACOutputValue();
+    POTOutputValue();
     TimeToResetButtonInput();
-    dacValue = map(buttonIndex, 0, INPUT_SUM, 0, DAC_MAX);
-    if (dacValue != 0)
+    potValue = map(buttonIndex, 0, INPUT_SUM, 0, POT_MAX);
+    if (potValue != 0)
     {
-      Serial.print("DAC Value: ");
-      Serial.println(dacValue);
+      Serial.print("pot Value: ");
+      Serial.println(potValue);
     }
-    dac.setVoltage(dacValue, false);
+    pot.setVoltage(potValue, false);
 
     delay(DEFAULT_DELAY);
   }
@@ -313,7 +315,7 @@ public:
       Serial.println("Vol DOWN");
       volumeEncoder = vol_down;
     }
-    //Serial.println(DACOutputValue());
+    //Serial.println(potOutputValue());
   }
 
   void SetPause()
