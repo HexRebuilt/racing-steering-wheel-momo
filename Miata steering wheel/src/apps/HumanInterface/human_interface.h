@@ -29,8 +29,3 @@ public:
      * */
     void SetBrightness(short value);
 };
-
-HumanInterface::HumanInterface()
-{
-    Initialize();
-}

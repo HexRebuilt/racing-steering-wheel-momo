@@ -95,14 +95,8 @@ void setup()
   ledBar.Initialize();
   Serial.println("LCD & LED configuration DONE");
 
-  
   delay(DEFAULT_DELAY);
   Serial.println("Configuration DONE");
-
-
-  
-  
-
 }
 
 void loop()

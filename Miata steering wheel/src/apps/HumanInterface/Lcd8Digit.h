@@ -321,10 +321,12 @@ public:
             short newTimezone = storage.GetTimeZone() + encoderDelta;
             storage.SetTimeZone(newTimezone);
             DisplayClock();
-            TimeToReset();
+            switchtime = millis();
             break;
         case bright:
             SetBrightness(encoder);
+            break;
+        default:
             break;
         }
     }
