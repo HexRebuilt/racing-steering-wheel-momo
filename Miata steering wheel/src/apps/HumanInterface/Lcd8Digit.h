@@ -1,16 +1,18 @@
 #include <LedControl.h>
+#include "storageManager.h"
 
 class Lcd8Digit : public HumanInterface
 {
 private:
     /* data */
+    StorageManager storage;
     LedControl lcd = LedControl(LCD_DIN, LCD_CLK, LCD_CS, 1);
     int lcdbrightness = MAX_BRIGHT_LCD;                                          //initial level
     int rpm = 0, speed = 0, satellites = 0, hours = 0, minutes = 0, seconds = 0; //oiltemp =0, watertmp=0;
     short brightness = 100;
     String brightChange = "", hud = "";
     unsigned long switchtime = 0;
-    short timezone = 0;
+    boolean day = true;
 
     enum State : uint8_t
     {
@@ -146,6 +148,7 @@ private:
             currentstate = tachometer;
         }
     }
+    
 
 public:
     Lcd8Digit(/* args */);
@@ -206,7 +209,7 @@ public:
      * */
     void SetTime(int h, int m, int s)
     {
-        hours = h + timezone;
+        hours = h + storage.GetTimeZone();
         minutes = m;
         seconds = s;
     }
@@ -289,11 +292,13 @@ public:
         satellites = newSat;
     }
 
-    void SetTimeZone (short time){
-        timezone = time;
-    }
 };
 
 Lcd8Digit::Lcd8Digit(/* args */)
 {
+}
+
+Lcd8Digit::Lcd8Digit()
+{
+    Initialize();
 }

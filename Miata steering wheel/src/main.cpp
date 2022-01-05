@@ -16,7 +16,6 @@
 #include "inputManager.h"
 #include "rpmReader.h"
 #include "timer.h"
-#include "storageManager.h"
 
 
 unsigned short radioOutputStep = 0;
@@ -31,13 +30,13 @@ LedBar ledBar;
 
 TinyGPSPlus gps;
 
-StorageManager storage;
+
 
 RpmReader rpm(RPMDCPIN);
 
 Timer upMenuTimer(INPUT_DELAY);
 Timer downMenuTimer(INPUT_DELAY);
-short tmz = 0;
+
 
 unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0, speed = 0, rpmDC = 0;
 
@@ -91,7 +90,6 @@ void setup()
   Serial.println("GPS STARTED");
 
   lcd8Digit.Initialize();
-  lcd8Digit.SetTimeZone(storage.GetTimeZone());
   ledBar.Initialize();
   Serial.println("LCD & LED configuration DONE");
 
