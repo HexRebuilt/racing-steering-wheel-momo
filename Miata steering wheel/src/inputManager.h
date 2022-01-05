@@ -152,7 +152,6 @@ public:
 /**
  * It sets the digital potentiometer output value
  * */
-
   void SetPot()
   {
     POTOutputValue();
