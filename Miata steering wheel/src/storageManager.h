@@ -55,7 +55,7 @@ public:
         */
     }
 
-    void StoreTimeZone(short value)
+    void SetTimeZone(short value)
     {
         timezone = value;
         EEPROM.put(memoryPostition[timezoneAddress], value);
