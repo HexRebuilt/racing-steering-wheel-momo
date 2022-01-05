@@ -73,4 +73,5 @@ StorageManager::StorageManager(/* args */)
 
 StorageManager::~StorageManager()
 {
+    Startup();
 }

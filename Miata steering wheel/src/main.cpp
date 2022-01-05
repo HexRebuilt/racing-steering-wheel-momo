@@ -16,6 +16,7 @@
 #include "inputManager.h"
 #include "rpmReader.h"
 #include "timer.h"
+#include "storageManager.h"
 
 
 unsigned short radioOutputStep = 0;
@@ -25,12 +26,12 @@ Encoder_KY040 volumewheel, ledwheel;
 
 InputManager inputManager;
 
-MPC4131 radioOut;
-
 Lcd8Digit lcd8Digit;
 LedBar ledBar;
 
 TinyGPSPlus gps;
+
+StorageManager storage;
 
 RpmReader rpm(RPMDCPIN);
 
@@ -64,10 +65,7 @@ void setup()
 {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //set timezone
-  //EEPROM.put(TIME_ZONE_ADDRESS,2);
- 
-  
+    
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK, VOL_DATA);
   ledwheel.Encodersetup(BRIGHTNESS_CLK, BRIGNTNESS_DATA);
@@ -88,13 +86,12 @@ void setup()
 
   delay(100);
   Serial.println("Pin configuration DONE");
-  EEPROM.get(TIME_ZONE_ADDRESS,tmz);//get the current timezone
   //gps configuration
   Serial3.begin(GPSBAUD);
   Serial.println("GPS STARTED");
 
   lcd8Digit.Initialize();
-  lcd8Digit.SetTimeZone(tmz);
+  lcd8Digit.SetTimeZone(storage.GetTimeZone());
   ledBar.Initialize();
   Serial.println("LCD & LED configuration DONE");
 
