@@ -28,6 +28,7 @@ public:
 
     void SetBrightness(short value)
     {
+        /*
         if (currentValue == value)
         {
             return; //no action needed
@@ -55,8 +56,8 @@ public:
         if (ledbrightness < MIN_BRIGHT_LEDS)
         {
             ledbrightness = MIN_BRIGHT_LEDS;
-        }
-
+        }*/
+        ledbrightness = map(value,MIN_BRIGHT_LEDS, MAX_BRIGHT_LEDS, 10, 100);
         //changing the brightness
         FastLED.setBrightness(ledbrightness);
         

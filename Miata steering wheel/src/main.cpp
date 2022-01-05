@@ -21,7 +21,7 @@
 unsigned short radioOutputStep = 0;
 
 
-Encoder_KY040 volumewheel, ledwheel;
+Encoder_KY040 volumewheel, menuWheel;
 
 InputManager inputManager;
 
@@ -50,10 +50,12 @@ void interruptPause()
   inputManager.SetPause();
   Serial.println("Pause");
 }
-void interruptBrightness()
+void interruptEncoderMenu()
 {
-  lcd8Digit.SetBrightness(ledwheel.Steps());
-  ledBar.SetBrightness(ledwheel.Steps());
+  lcd8Digit.ModifyValues(menuWheel.Steps());
+  ledBar.SetBrightness(lcd8Digit.GetBrightness());
+  //lcd8Digit.SetBrightness(ledwheel.Steps());
+  //ledBar.SetBrightness(ledwheel.Steps());
 }
 
 void interruptRPM(){
@@ -67,10 +69,10 @@ void setup()
     
   //set encoderpins as Pin Change Interrupts
   volumewheel.Encodersetup(VOL_CLK, VOL_DATA);
-  ledwheel.Encodersetup(BRIGHTNESS_CLK, BRIGNTNESS_DATA);
+  menuWheel.Encodersetup(MENU_CLK, MENU_DATA);
   attachPCINT(digitalPinToPCINT(VOL_CLK), interruptVolume, CHANGE);
   attachInterrupt(digitalPinToInterrupt(PAUSE_BUTTON), interruptPause,FALLING);
-  attachPCINT(digitalPinToPCINT(BRIGHTNESS_CLK), interruptBrightness, CHANGE);
+  attachPCINT(digitalPinToPCINT(MENU_CLK), interruptEncoderMenu, CHANGE);
   
   //setting up the rpm pin
   pinMode(RPMDCPIN,INPUT_PULLUP);

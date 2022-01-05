@@ -5,8 +5,8 @@
 #define VOL_CLK                 13
 #define VOL_DATA                8
 #define PAUSE_BUTTON            3
-#define BRIGHTNESS_CLK          11
-#define BRIGNTNESS_DATA         9
+#define MENU_CLK                11
+#define MENU_DATA               9
 #define LCD_MODE_BUTTON         2
 #define BRIGHTNESS_SENSITIVITY  1
 #define VOL_SENSITIVITY         1
