@@ -1,4 +1,3 @@
-#include <Adafruit_MCP4725.h>
 #include "mpc4131.h"
 
 class InputManager
@@ -56,7 +55,7 @@ private:
   bool ecuSkip = false, buttonSkip = false, rockerSkip = false;
   
   MPC4131 radioOut;
-  Adafruit_MCP4725 pot;
+  
 
   /**
    * it works sequentially analyzing all the private enums and return the 
@@ -150,9 +149,12 @@ public:
     }
   }
 
+/**
+ * It sets the digital potentiometer output value
+ * */
+
   void SetPot()
   {
-
     POTOutputValue();
     TimeToResetButtonInput();
     potValue = map(buttonIndex, 0, INPUT_SUM, 0, POT_MAX);
@@ -161,8 +163,7 @@ public:
       Serial.print("pot Value: ");
       Serial.println(potValue);
     }
-    pot.setVoltage(potValue, false);
-
+    radioOut.digitalPotWrite(potValue);
     delay(DEFAULT_DELAY);
   }
 
