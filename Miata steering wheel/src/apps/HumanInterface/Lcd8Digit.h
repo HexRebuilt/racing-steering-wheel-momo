@@ -257,16 +257,11 @@ public:
 
     /**
      * function that take a delta value and addes to the bright value
-     * @param value +/-1 depending on the rotation
+     * @param delta +/-1 depending on the rotation
      * */
-    void SetBrightness(short value)
+    void SetBrightness(short delta)
     {
-        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
-        Serial.print("new brightness: ");
-        Serial.println(brightness);
-
-        lcdbrightness += value;
-
+        lcdbrightness += delta;
         // keeping the LCD brightness in range
         if (lcdbrightness > MAX_BRIGHT_LCD)
         {
@@ -279,6 +274,11 @@ public:
         // isBrightnessChanged = true;
         currentstate = bright; // need a context switch
         switchtime = millis();
+
+        brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
+        Serial.print("new brightness: ");
+        Serial.println(brightness);
+
     }
 
     /**
@@ -310,6 +310,7 @@ public:
             SetBrightness(encoderDelta);
             break;
         default:
+            SetBrightness(encoderDelta);
             break;
         }
     }
