@@ -191,7 +191,7 @@ public:
         lcd.clearDisplay(0);
         Serial.println("LCD configuration DONE");
         SetTextLCD("-HELL0-");
-        //memory config
+        // memory config
         storage.Startup();
     }
 
@@ -278,7 +278,6 @@ public:
         brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
         Serial.print("new brightness: ");
         Serial.println(brightness);
-
     }
 
     /**
@@ -289,11 +288,17 @@ public:
      */
     void ModifyValues(short encoder)
     {
+        if (encoder == encoderValue) // same value as before. skip
+        {
+            return;
+        }
+
         // Calculating the delta
         encoderDelta = encoder - encoderValue;
-        encoderValue = encoder; //updating the stored value
+        encoderValue = encoder; // updating the stored value
         Serial.print("Encoder Delta: ");
         Serial.println(encoderDelta);
+
         switch (currentstate)
         {
         case tachometer:
