@@ -54,8 +54,6 @@ void interruptEncoderMenu()
 {
   lcd8Digit.ModifyValues(menuWheel.Steps());
   ledBar.SetBrightness(lcd8Digit.GetBrightness());
-  //lcd8Digit.SetBrightness(ledwheel.Steps());
-  //ledBar.SetBrightness(ledwheel.Steps());
 }
 
 void interruptRPM(){
@@ -77,6 +75,7 @@ void setup()
   //setting up the rpm pin
   pinMode(RPMDCPIN,INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(RPMDCPIN),interruptRPM,FALLING);
+
   //radio buttons chain
   pinMode(BUTTON_CHAIN_PIN,INPUT);
   pinMode(ROCKER_CHAIN_PIN,INPUT);
@@ -123,7 +122,7 @@ void loop()
     gps.encode(Serial3.read());
   }
   
-  //updating the output devices
+  //updating the lcd and leds
   if (inputManager.isMenuUp())
   {
     lcd8Digit.UpMenu();
