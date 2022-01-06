@@ -59,6 +59,8 @@ public:
 
     void SetTimeZone(short value)
     {
+        Serial.print("timezone saved: ");
+        Serial.println(value);
         timezone = value;
         EEPROM.put(memoryPostition[timezoneAddress], value);
     }
