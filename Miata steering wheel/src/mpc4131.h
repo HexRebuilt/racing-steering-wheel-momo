@@ -16,8 +16,8 @@ public:
 
     void digitalPotWrite(unsigned int value)
     {
-        Serial.print("POT VALUE: ");
-        Serial.println(value);
+        //Serial.print("POT VALUE: ");
+        //Serial.println(value);
 
         digitalWrite(RADIO_MPC4131_CS, LOW);
         SPI.transfer(RADIO_MPC4131_ADDRESS);

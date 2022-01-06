@@ -53,6 +53,8 @@ public:
         EEPROM.get(memoryPostition[oilResistanceValueAddress], oilResistanceValue); // get the current timezone value from the eeprom
         EEPROM.get(memoryPostition[waterResistanceValueAddress], waterResistanceValue); // get the current timezone value from the eeprom
         */
+       Serial.print("timezone readed: ");
+       Serial.println(timezone);
     }
 
     void SetTimeZone(short value)

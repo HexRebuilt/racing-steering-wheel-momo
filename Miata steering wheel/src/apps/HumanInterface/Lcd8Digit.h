@@ -191,6 +191,8 @@ public:
         lcd.clearDisplay(0);
         Serial.println("LCD configuration DONE");
         SetTextLCD("-HELL0-");
+        //memory config
+        storage.Startup();
     }
 
     void SetSpeed(int newSpeed)
@@ -210,6 +212,11 @@ public:
     void SetTime(int h, int m, int s)
     {
         hours = h + storage.GetTimeZone();
+        if (hours > 24)
+        {
+            hours = storage.GetTimeZone();
+        }
+
         minutes = m;
         seconds = s;
     }
@@ -248,30 +255,17 @@ public:
         }
     }
 
+    /**
+     * function that take a delta value and addes to the bright value
+     * @param value +/-1 depending on the rotation
+     * */
     void SetBrightness(short value)
     {
         brightness = map(lcdbrightness, MIN_BRIGHT_LCD, MAX_BRIGHT_LCD, 10, 100);
         Serial.print("new brightness: ");
         Serial.println(brightness);
 
-        if (currentValue == value)
-        {
-            return; // no action needed
-        }
-
-        if (currentValue < value) // need to increase brightness
-        {
-            delta = value - currentValue;
-            // delta = delta / (float) SENSITIVITY;
-            lcdbrightness += delta;
-        }
-        else
-        {
-            delta = currentValue - value;
-            // delta = delta / (float) SENSITIVITY;
-            lcdbrightness -= delta;
-        }
-        currentValue = value;
+        lcdbrightness += value;
 
         // keeping the LCD brightness in range
         if (lcdbrightness > MAX_BRIGHT_LCD)
@@ -296,25 +290,14 @@ public:
     void ModifyValues(short encoder)
     {
         // Calculating the delta
-        if (encoderValue == encoder)
-        {
-            return; // no action needed
-        }
-
-        if (encoderValue < encoder) // need to increase the contectual value
-        {
-            encoderDelta = encoder - encoderValue;
-        }
-        else
-        {
-            encoderDelta = encoderValue - encoder;
-        }
+        encoderDelta = encoder - encoderValue;
         encoderValue = encoder; //updating the stored value
-        
+        Serial.print("Encoder Delta: ");
+        Serial.println(encoderDelta);
         switch (currentstate)
         {
         case tachometer:
-            SetBrightness(encoder);
+            SetBrightness(encoderDelta);
             break;
         case clock:
             Serial.println("Chaniging timezone");
@@ -324,7 +307,7 @@ public:
             switchtime = millis();
             break;
         case bright:
-            SetBrightness(encoder);
+            SetBrightness(encoderDelta);
             break;
         default:
             break;
@@ -336,7 +319,8 @@ public:
         satellites = newSat;
     }
 
-    short GetBrightness(){
+    short GetBrightness()
+    {
         return brightness;
     }
 };
