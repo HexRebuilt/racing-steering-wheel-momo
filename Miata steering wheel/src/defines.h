@@ -29,7 +29,9 @@
 //radio potentiometer
 #define RADIO_MPC4131_CS        42
 #define RADIO_MPC4131_ADDRESS   0x00
+#define POT_MIN                 35
 #define POT_MAX                 127
+#define ANALOG_OUTPUT_TIME      10  //ms
 
 /*
 //menu context switch pins
@@ -71,7 +73,6 @@
 #define ROCKER_RESISTORS        2   //2 in the chain
 #define ECU_RESISTORS           6   //it includes also the rocker
 #define THRESHOLD               50  //to avoid incorrect reading from bad ground
-#define ANALOG_OUTPUT_TIME      5000//100  //ms
 //value range for analog reading
 //ECU: launch 506/508, yellow 340/342, white 251/253, menu up 176/178, menu down 152/154
 //radio: reply 860/863, close call 650/655, voice comand 427/438, source 175/176

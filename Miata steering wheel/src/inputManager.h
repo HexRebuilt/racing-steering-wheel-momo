@@ -156,8 +156,8 @@ public:
   {
     POTOutputValue();
     TimeToResetButtonInput();
-    potValue = map(buttonIndex, 0, INPUT_SUM, 0, POT_MAX);
-    if (potValue != 0)
+    potValue = map(buttonIndex, 0, INPUT_SUM, POT_MIN, POT_MAX);
+    if (potValue != POT_MIN)
     {
       Serial.print("pot Value: ");
       Serial.println(potValue);
