@@ -296,28 +296,21 @@ public:
         // Calculating the delta
         encoderDelta = encoder - encoderValue;
         encoderValue = encoder; // updating the stored value
-        Serial.print("Encoder Delta: ");
-        Serial.println(encoderDelta);
 
         switch (currentstate)
         {
-        case tachometer:
+        default:
+            Serial.println("Default changing brightness");
             SetBrightness(encoderDelta);
             break;
         case clock:
             Serial.println("Chaniging timezone");
             short newTimezone = storage.GetTimeZone() + encoderDelta;
             storage.SetTimeZone(newTimezone);
-            DisplayClock();
             switchtime = millis();
             break;
-        case bright:
-            SetBrightness(encoderDelta);
-            break;
-        default:
-            SetBrightness(encoderDelta);
-            break;
         }
+        encoderDelta=0;
     }
 
     void SetSatellites(int newSat)
