@@ -131,14 +131,14 @@ public:
     {
       if (speed > lastSpeedVolumeChange + KMPH_PER_VOLUME_CHANGE)
       {
-        ChangeVolume(VOLUME_STEPS);
         volumeChange = true;
+        volumeEncoder = vol_up;
       }
 
       if (speed < lastSpeedVolumeChange - KMPH_PER_VOLUME_CHANGE)
       {
-        ChangeVolume(-VOLUME_STEPS);
         volumeChange = true;
+        volumeEncoder = vol_down;
       }
       if (volumeChange)
       {
