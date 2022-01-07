@@ -5,17 +5,14 @@ class Encoder_KY040
 private:
     /* data */
     int pinA; // Connected to CLK on KY-040
-    int pinB;  // Connected to DT on KY-040
+    int pinB; // Connected to DT on KY-040
     int pinSW;
     int encoderPosCount = 0;
     int pinALast;
     int aVal;
-    boolean bCW;
-
-
+    boolean bCW, skipStep = false;
 
 public:
-
     /**
      * needs 3 pins:
      * INPUT: pins: CW, DATA, SWITCH. if no witch is available put it to 0
@@ -24,11 +21,10 @@ public:
     {
         pinA = pincw;
         pinB = pindata;
-        
+
         pinMode(pinA, INPUT);
         pinMode(pinB, INPUT);
-        
-      
+
         /* Read Pin A
         Whatever state it's in will reflect the last position
         */
@@ -49,25 +45,30 @@ public:
             // We do that by reading pin B.
             if (digitalRead(pinB) != aVal)
             { // Means pin A Changed first - We're Rotating Clockwise
-                encoderPosCount++;
+
                 bCW = true;
             }
             else
             { // Otherwise B changed first and we're moving CCW
                 bCW = false;
-                encoderPosCount--;
             }
-            Serial.print("Rotated: ");
-            if (bCW)
+            if (skipStep)
             {
-                Serial.println("clockwise");
+                Serial.print("Rotated: ");
+                if (bCW)
+                {
+                    Serial.println("clockwise");
+                    encoderPosCount++;
+                }
+                else
+                {
+                    Serial.println("counterclockwise");
+                    encoderPosCount--;
+                }
+                Serial.print("Encoder Position: ");
+                Serial.println(encoderPosCount);
             }
-            else
-            {
-                Serial.println("counterclockwise");
-            }
-            Serial.print("Encoder Position: ");
-            Serial.println(encoderPosCount);
+            skipStep = !skipStep;
         }
         pinALast = aVal;
         return encoderPosCount;
