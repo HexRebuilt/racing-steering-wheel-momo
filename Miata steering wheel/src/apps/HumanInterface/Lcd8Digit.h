@@ -261,6 +261,8 @@ public:
      * */
     void SetBrightness(short delta)
     {
+        Serial.print("Delta brightness: ");
+        Serial.println(delta);
         lcdbrightness += delta;
         // keeping the LCD brightness in range
         if (lcdbrightness > MAX_BRIGHT_LCD)
@@ -271,6 +273,8 @@ public:
         {
             lcdbrightness = MIN_BRIGHT_LCD;
         }
+        Serial.print("lcdbrightness value: ");
+        Serial.println(lcdbrightness);
         // isBrightnessChanged = true;
         currentstate = bright; // need a context switch
         switchtime = millis();
@@ -288,11 +292,7 @@ public:
      */
     void ModifyValues(short encoder)
     {
-        if (encoder == encoderValue) // same value as before. skip
-        {
-            return;
-        }
-
+        
         // Calculating the delta
         encoderDelta = encoder - encoderValue;
         encoderValue = encoder; // updating the stored value
