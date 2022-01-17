@@ -27,11 +27,12 @@
 #define DIGIT_UPDATE_MS         5
 
 //radio potentiometer
-#define RADIO_MPC4131_CS        42
-#define RADIO_MPC4131_ADDRESS   0x00
-#define POT_MIN                 35
-#define POT_MAX                 127
-#define ANALOG_OUTPUT_TIME      20  //ms /2000 per config
+#define RADIO_MPC4131_CS            42
+#define RADIO_MPC4131_ADDRESS       0x00
+#define POT_MIN                     35
+#define POT_MAX                     127
+#define ANALOG_OUTPUT_TIME          20  //ms 
+#define ANALOG_OUTPUT_CONFIG_TIME   2000 //ms
 
 /*
 //menu context switch pins
