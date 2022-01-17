@@ -53,11 +53,10 @@
 #define YELLOW_RPM_DC       50 //5500RPM should be more or less 80% of DC
 #define RED_RPM_DC          80
 #define SHIFTLIGHT_RPM_DC   80
-#define MINRPM              5 
+#define REDLINE_DUTY_CYCLE  75 //to be tested
+#define MINRPM              0 
 #define MAXRPM              8000
-#define RPMDCPIN            19   //D19
-#define CYLINDER_NUMBER     4  
-#define RPM_UPDATE_INTERVAL 50   
+#define RPMDCPIN            19   //D19 
 
 //GPS stuff
 #define GPSBAUD 9600
