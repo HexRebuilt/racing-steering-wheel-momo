@@ -150,7 +150,7 @@ public:
     }
   }
 
-  void SetOutoutTime (unsigned short newTime){
+  void SetOutputTime (unsigned short newTime){
     outputResetTime = newTime;
   }
 
