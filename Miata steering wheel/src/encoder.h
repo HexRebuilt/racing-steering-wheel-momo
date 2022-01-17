@@ -10,7 +10,7 @@ private:
     int encoderPosCount = 0;
     int pinALast;
     int aVal;
-    boolean bCW, count = true;
+    boolean bCW;
 
 public:
     /**
@@ -46,31 +46,27 @@ public:
             if (digitalRead(pinB) != aVal)
             { // Means pin A Changed first - We're Rotating Clockwise
                 bCW = true;
+                encoderPosCount++;
             }
             else
             { // Otherwise B changed first and we're moving CCW
                 bCW = false;
+                encoderPosCount--;
             }
 
-            count = !count; //reducd the sensitivity
-
-            if (count)
+            Serial.print("Rotated: ");
+            if (bCW)
             {
-            
-                Serial.print("Rotated: ");
-                if (bCW)
-                {
-                    encoderPosCount++;
-                    Serial.println("clockwise");
-                }
-                else
-                {
-                    encoderPosCount--;
-                    Serial.println("counterclockwise");
-                }
-                Serial.print("Encoder Position: ");
-                Serial.println(encoderPosCount);
+
+                Serial.println("clockwise");
             }
+            else
+            {
+
+                Serial.println("counterclockwise");
+            }
+            Serial.print("Encoder Position: ");
+            Serial.println(encoderPosCount);
         }
         pinALast = aVal;
         return encoderPosCount;
