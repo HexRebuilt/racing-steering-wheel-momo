@@ -30,12 +30,10 @@ LedBar ledBar;
 
 TinyGPSPlus gps;
 
-
-
 RpmReader rpm(RPMDCPIN);
 
-Timer upMenuTimer(INPUT_DELAY);
-Timer downMenuTimer(INPUT_DELAY);
+//Timer upMenuTimer(INPUT_DELAY);
+//Timer downMenuTimer(INPUT_DELAY);
 
 
 unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0, speed = 0, rpmDC = 0;
