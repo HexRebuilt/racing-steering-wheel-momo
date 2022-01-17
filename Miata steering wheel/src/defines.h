@@ -49,13 +49,11 @@
 #define GREEN_LED_INDEX     4
 #define YELLOW_LED_INDEX    1
 #define RED_LED_INDEX       0
-#define GREEN_RPM_DC        30 //4000RPM should be more or less 60% of DC
-#define YELLOW_RPM_DC       50 //5500RPM should be more or less 80% of DC
-#define RED_RPM_DC          80
-#define SHIFTLIGHT_RPM_DC   80
+#define MIN_RPM_LIGHT       2500 //under this rpm the leds will stay off
+#define SHIFTLIGHT_RPM      6000
 #define REDLINE_DUTY_CYCLE  75 //to be tested
 #define MINRPM              0 
-#define MAXRPM              8000
+#define MAXRPM              7000
 #define RPMDCPIN            19   //D19 
 
 //GPS stuff

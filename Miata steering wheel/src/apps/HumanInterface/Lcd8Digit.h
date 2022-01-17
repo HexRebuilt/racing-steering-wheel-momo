@@ -210,9 +210,9 @@ public:
         speed = newSpeed;
     }
 
-    void SetRPMDC(int newRPM_DC)
+    void SetRPM(int newRPM)
     {
-        rpm = map(newRPM_DC, 0, SHIFTLIGHT_RPM_DC, 0, MAXRPM);
+        rpm = newRPM;
     }
 
     /**

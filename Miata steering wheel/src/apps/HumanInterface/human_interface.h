@@ -21,7 +21,7 @@ public:
 
     void Update();
 
-    void SetRPMDC(int newRPM_DC);
+    void SetRPM(int newRPM);
 
     /**
      * setting up the brightness depending on the difference from the previous value adding 

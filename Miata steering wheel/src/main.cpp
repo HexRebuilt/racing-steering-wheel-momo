@@ -33,7 +33,7 @@ TinyGPSPlus gps;
 RpmReader rpm(RPMDCPIN);
 
 
-unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0, speed = 0, rpmDC = 0;
+unsigned int buttonADC = 0, rockerADC = 0, ecuADC = 0, speed = 0, rpmCurrent = 0;
 
 //series of interrupt associated functions
 void interruptVolume()
@@ -52,7 +52,7 @@ void interruptEncoderMenu()
 }
 
 void interruptRPM(){
-  rpm.incrementRpmCount();
+  rpm.DutyCyclePinChange();
 }
 
 void setup()
@@ -101,15 +101,15 @@ void loop()
   rockerADC = analogRead(ROCKER_CHAIN_PIN);
   ecuADC = analogRead (ECU_CHAIN_PIN);
   speed = gps.speed.kmph();
-  rpmDC = 0; //rpm.ReadRPM();
+  rpmCurrent = 0; //rpm.GetRPM();
 
   lcd8Digit.SetSatellites(gps.satellites.value());
   lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
   lcd8Digit.SetSpeed((int) speed);
-  lcd8Digit.SetRPMDC(rpmDC);
+  lcd8Digit.SetRPM(rpmCurrent);
   lcd8Digit.Update();
   
-  ledBar.SetRPMDC(rpmDC);
+  ledBar.SetRPM(rpmCurrent);
   ledBar.Update();
 
   if (lcd8Digit.IsRadioConfigOut())

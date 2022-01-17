@@ -22,7 +22,7 @@ private:
 
 public:
     RpmReader(int pin);
-    short DutyCycleReader()
+    short GetRPM()
     {
         static unsigned long oldLastRead = lastRead;
         if (oldLastRead != lastRead) //interrupt has happen in the meantime

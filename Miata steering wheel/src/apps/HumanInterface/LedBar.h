@@ -7,7 +7,7 @@ private:
     int ledbrightness = MAX_BRIGHT_LEDS; //initial level
     CRGB leds[NUM_LEDS];
     uint8_t offled = NUM_LEDS;
-    int rpmDC = 0;
+    int rpm = 0;
 
 public:
     LedBar(/* args */);
@@ -18,7 +18,7 @@ public:
         FastLED.setBrightness(MAX_BRIGHT_LEDS);
         for (int i = 0; i < NUM_LEDS; i++)
         {
-            SetRPMDC((i + 1) * 10 + 5);
+            SetRPM((i + 1) * 10 + 5);
             Update();
             delay(50);
         }
@@ -28,35 +28,6 @@ public:
 
     void SetBrightness(short value)
     {
-        /*
-        if (currentValue == value)
-        {
-            return; //no action needed
-        }
-
-        if (currentValue < value) //need to increase brightness
-        {
-            delta = value - currentValue;
-            //delta = delta / (float) SENSITIVITY;
-            ledbrightness += delta * LED_BRIGHT_STEP;
-        }
-        else
-        {
-            delta = currentValue - value;
-            //delta = delta / (float) SENSITIVITY;
-            ledbrightness -= delta * LED_BRIGHT_STEP;
-        }
-        currentValue = value;
-
-        //keeping the LED brightness in range
-        if (ledbrightness > MAX_BRIGHT_LEDS)
-        {
-            ledbrightness = MAX_BRIGHT_LEDS;
-        }
-        if (ledbrightness < MIN_BRIGHT_LEDS)
-        {
-            ledbrightness = MIN_BRIGHT_LEDS;
-        }*/
         ledbrightness = map(value,MIN_BRIGHT_LEDS, MAX_BRIGHT_LEDS, 10, 100);
         //changing the brightness
         FastLED.setBrightness(ledbrightness);
@@ -68,8 +39,8 @@ public:
      * */
     void Update()
     {
-        //Serial.println(rpmDC);
-        if (rpmDC == 0 || rpmDC > 100 || rpmDC < 0) //if i am outside my scope i exit
+        //Serial.println(rpm);
+        if (rpm == 0 || rpm > MAXRPM || rpm < 0) //if i am outside my scope i exit
         {
             for (int i = 0; i < NUM_LEDS; i++)
             {
@@ -81,7 +52,7 @@ public:
         }
 
         //shiftlight needs to happen asap
-        if (rpmDC >= SHIFTLIGHT_RPM_DC)
+        if (rpm >= SHIFTLIGHT_RPM)
         {
             //Serial.println("SHIFTLIGHT");
             for (int i = 0; i < NUM_LEDS; i++)
@@ -100,7 +71,7 @@ public:
             return;
         }
 
-        offled = (uint8_t)map(rpmDC, 0, SHIFTLIGHT_RPM_DC, NUM_LEDS, 0);
+        offled = (uint8_t)map(rpm, MINRPM, SHIFTLIGHT_RPM, NUM_LEDS, 0);
         //Serial.println(offled);
         for (int i = 0; i < offled; i++)
         {
@@ -134,9 +105,9 @@ public:
         FastLED.show();
     }
 
-    void SetRPMDC(int newRPM_DC)
+    void SetRPM(int newRPM)
     {
-        rpmDC = newRPM_DC;
+        rpm = newRPM;
     }
 };
 
