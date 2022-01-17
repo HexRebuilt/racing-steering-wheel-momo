@@ -108,6 +108,25 @@ void loop()
   speed = gps.speed.kmph();
   rpmDC = 0; //rpm.ReadRPM();
 
+  lcd8Digit.SetSatellites(gps.satellites.value());
+  lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
+  lcd8Digit.SetSpeed((int) speed);
+  lcd8Digit.SetRPMDC(rpmDC);
+  lcd8Digit.Update();
+  
+  ledBar.SetRPMDC(rpmDC);
+  ledBar.Update();
+
+  if (lcd8Digit.IsRadioConfigOut())
+  {
+    //set config time
+    inputManager.SetOutputTime(ANALOG_OUTPUT_CONFIG_TIME);
+    Serial.println("RADIO CONFIG MODE");
+  }
+  else{
+    inputManager.SetOutputTime(ANALOG_OUTPUT_TIME);
+  }
+  
 
   inputManager.AnalogButtonDecoder(buttonADC);
   inputManager.AnalogRockerDecoder(rockerADC);
@@ -132,14 +151,7 @@ void loop()
     lcd8Digit.DownMenu();
   }
   
-  lcd8Digit.SetSatellites(gps.satellites.value());
-  lcd8Digit.SetTime(gps.time.hour(),gps.time.minute(),gps.time.second());
-  lcd8Digit.SetSpeed((int) speed);
-  lcd8Digit.SetRPMDC(rpmDC);
-  lcd8Digit.Update();
-  
-  ledBar.SetRPMDC(rpmDC);
-  ledBar.Update();  
+
   
   delay(DEFAULT_DELAY);
 }
