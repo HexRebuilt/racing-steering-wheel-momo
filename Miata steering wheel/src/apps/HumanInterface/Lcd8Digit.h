@@ -14,6 +14,7 @@ private:
     unsigned long switchtime = 0;
     boolean day = true;
     short encoderValue = 0, encoderDelta = 0;
+    boolean isRadioTimeOut = false;
 
     enum State : uint8_t
     {
@@ -24,6 +25,7 @@ private:
         satelliteNumber,
         clock,
         bright,
+        radioOut,
         end_of_states
     };
 
@@ -100,6 +102,14 @@ private:
         SetTextLCD(hud);
     }
 
+    /**
+     * @brief function that notifies the change in radio output time 
+     * 
+     */
+    void RadioOutTime(){
+        isRadioTimeOut = true;
+        SetTextLCD("0U1. 5EC");
+    }
     // changing the brightness
     void BrightChange()
     {
@@ -226,6 +236,7 @@ public:
      * */
     void Update()
     {
+        isRadioTimeOut = false;
         // Serial.println(currentstate);
         switch (currentstate)
         {
@@ -247,12 +258,23 @@ public:
             BrightChange();
             TimeToReset();
             break;
+        case radioOut:
+            RadioOutTime();
+            //NOT CALLING FOR TIMETORESET BECAUSE NEEDS TO STAY IN THIS POSITION
+            break;
         default:
             // Serial.println("tachometer");
             currentstate = tachometer;
             SetTachometer();
             break;
         }
+    }
+
+    /**
+     * @brief funciton that goves back to the main the state of the config timing
+     */
+    boolean IsRadioOut(){
+        return isRadioTimeOut;
     }
 
     /**
