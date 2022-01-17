@@ -46,6 +46,7 @@ private:
   short volumeCurrentState = 0;
   uint8_t buttonIndex = 0;
   unsigned long switchtime = 0;
+  unsigned short outputResetTime = ANALOG_OUTPUT_TIME;
 
   unsigned int potValue = 0;
   int speed = 0, lastSpeedVolumeChange = 0;
@@ -98,7 +99,7 @@ private:
 
   void TimeToResetButtonInput()
   {
-    if (switchtime != 0 && (millis() - switchtime) >= ANALOG_OUTPUT_TIME)
+    if (switchtime != 0 && (millis() - switchtime) >= outputResetTime)
     {
       // I need to reset the state of the lcd
       Serial.println("Resetting pot output");
@@ -147,6 +148,10 @@ public:
         SetPot();
       }
     }
+  }
+
+  void SetOutoutTime (unsigned short newTime){
+    outputResetTime = newTime;
   }
 
 /**
