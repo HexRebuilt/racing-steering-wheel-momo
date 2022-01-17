@@ -14,7 +14,7 @@ private:
     unsigned long switchtime = 0;
     boolean day = true;
     short encoderValue = 0, encoderDelta = 0;
-    boolean isRadioTimeOut = false;
+    boolean isRadioConfigOut = false;
 
     enum State : uint8_t
     {
@@ -106,8 +106,8 @@ private:
      * @brief function that notifies the change in radio output time 
      * 
      */
-    void RadioOutTime(){
-        isRadioTimeOut = true;
+    void RadioConfigTime(){
+        isRadioConfigOut = true;
         SetTextLCD("0U1. 5EC");
     }
     // changing the brightness
@@ -236,7 +236,7 @@ public:
      * */
     void Update()
     {
-        isRadioTimeOut = false;
+        isRadioConfigOut = false;
         // Serial.println(currentstate);
         switch (currentstate)
         {
@@ -259,7 +259,7 @@ public:
             TimeToReset();
             break;
         case radioOut:
-            RadioOutTime();
+            RadioConfigTime();
             //NOT CALLING FOR TIMETORESET BECAUSE NEEDS TO STAY IN THIS POSITION
             break;
         default:
@@ -273,8 +273,8 @@ public:
     /**
      * @brief funciton that goves back to the main the state of the config timing
      */
-    boolean IsRadioOut(){
-        return isRadioTimeOut;
+    boolean IsRadioConfigOut(){
+        return isRadioConfigOut;
     }
 
     /**
